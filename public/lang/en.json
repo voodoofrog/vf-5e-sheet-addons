@@ -1,0 +1,15 @@
+{
+  "vf-5e-sheet-addons": {
+    "class-names": {
+      "artificer": "Artificer",
+      "cleric": "Cleric",
+      "druid": "Druid",
+      "paladin": "Paladin",
+      "wizard": "Wizard"
+    },
+    "spellcasting": {
+      "prep-limit": "P. Limit",
+      "block-title": "Spellcasting"
+    }
+  }
+}

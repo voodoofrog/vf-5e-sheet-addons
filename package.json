@@ -1,0 +1,38 @@
+{
+  "description": "Some addons for the new 5e sheet.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "author": "Nick Stevens (VoodooFrog) <voodoofrog@forgottendream/co.uk> (https://github.com/voodoofrog)",
+  "contributors": [
+    "Nick Stevens (VoodooFrog) <voodoofrog@forgottendream/co.uk> (https://github.com/voodoofrog)"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15",
+    "@typhonjs-config/eslint-config": "^0",
+    "@typhonjs-fvtt/eslint-config-foundry.js": "^0",
+    "autoprefixer": "^10",
+    "eslint": "^8",
+    "eslint-config-prettier": "^9",
+    "eslint-plugin-prettier": "^5",
+    "fast-glob": "^3",
+    "fs-extra": "^11",
+    "postcss-nesting": "^12.0.2",
+    "postcss-preset-env": "^9",
+    "prettier": "^3",
+    "vite": "^5",
+    "yargs": "^17"
+  },
+  "browserslist": [
+    ">5%",
+    "not IE 11"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "eslint": "eslint .",
+    "link:create": "node symlink-module-build-dir.js",
+    "link:remove": "node symlink-module-build-dir.js --clean",
+    "watch": "vite build --watch"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    "andrejunges.Handlebars",
+    "fabiospampinato.vscode-highlight",
+    "rioj7.vscode-json-validate",
+    "esbenp.prettier-vscode"
+  ]
+}

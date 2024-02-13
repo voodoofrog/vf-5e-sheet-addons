@@ -1,0 +1,8 @@
+.dnd5e2 .items-section .item .item-controls .item-control {
+  &.prep-limit {
+    color: var(--dnd5e-color-green);
+  }
+  &.prep-exceeded {
+    color: var(--dnd5e-color-red);
+  }
+}

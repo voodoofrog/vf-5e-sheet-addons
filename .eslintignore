@@ -1,0 +1,10 @@
+.github/
+dist/
+docs/
+external/
+lang/
+scripts/
+styles/
+templates/
+/index.js
+/index.js.map
