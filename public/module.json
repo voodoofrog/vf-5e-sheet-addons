@@ -2,7 +2,7 @@
   "id": "vf-5e-sheet-addons",
   "title": "VoodooFrog's 5e Sheet Addons",
   "description": "Some addons for the new 5e sheet.",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-beta.1",
   "authors": [
     {
       "name": "Nick Stevens (VoodooFrog)",
@@ -20,7 +20,9 @@
   "styles": [
     "style.css"
   ],
-  "templates": [],
+  "templates": [
+    "./templates/edit-classes.hbs"
+  ],
   "packs": [],
   "languages": [
     {

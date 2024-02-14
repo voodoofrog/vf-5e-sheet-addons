@@ -10,6 +10,38 @@
     "spellcasting": {
       "prep-limit": "P. Limit",
       "block-title": "Spellcasting"
+    },
+    "settings": {
+      "additional-class-names": {
+        "name": "Additional Prepared Caster class names",
+        "hint": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names as they appear in the box."
+      },
+      "edit-class-names-menu": {
+        "name": "Edit class names",
+        "label": "Edit",
+        "title": "Edit Class Names",
+        "note": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names as they appear in the box.",
+        "header": {
+          "name": "Class Name"
+        },
+        "button": {
+          "cancel": "Cancel",
+          "save": "Save Changes"
+        },
+        "tooltip": {
+          "create": "Add a new class name",
+          "undo": "Undo text changes",
+          "delete": "Delete this name"
+        }
+      },
+      "show-prep-limit-number": {
+        "name": "Show preparation limit",
+        "hint": "Untick this if you don't want to see the Prepared Spells Limit (P. Limit) in the Spellcasting box at the top of the spells tab."
+      },
+      "show-prep-limit-colours": {
+        "name": "Change colours for preparable spells",
+        "hint": "Untick this if you don't want the useable spell preparation icons in the spells tab to change colour when you reach or exceed your limit."
+      }
     }
   }
 }

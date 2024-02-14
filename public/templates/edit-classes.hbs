@@ -1,0 +1,38 @@
+<form class='categories flexcol'>
+  <div class='scrollable'>
+    <ol class='items-list'>
+      <li class='items-header flexrow'>
+        <h3 class='item-name flexrow'>{{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.header.name'}}</h3>
+        <div class='item-controls flexrow'>
+          <a class='item-control' data-action='create' data-tooltip='{{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.tooltip.create'}}'><i class='fas fa-plus'></i> Add </a>
+        </div>
+      </li>
+      <ol class='item-list'>
+        {{#each classNames as |className|}}
+          <li class='item flexrow' data-idx='{{@index}}'>
+            <div class='item-name flexrow'>
+              <input type='text' name='edit-name' value='{{className}}' />
+            </div>
+            <div class='item-controls flexrow'>
+              <a class='item-control' data-action='undo' data-tooltip='{{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.tooltip.undo'}}'><i class='fas fa-rotate-left'></i></a>
+              <a class='item-control' data-action='delete' data-tooltip='{{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.tooltip.delete'}}'><i class='fas fa-trash'></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ol>
+    </ol>
+  </div>
+  <footer class='flexcol'>
+    <p>{{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.note'}}</p>
+    <div class='flexrow'>
+      <button type='button' name='submit'>
+        <i class='far fa-save'></i>
+        {{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.button.save'}}
+      </button>
+      <button type='button' name='cancel'>
+        <i class='fas fa-cancel'></i>
+        {{localize 'vf-5e-sheet-addons.settings.edit-class-names-menu.button.cancel'}}
+      </button>
+    </div>
+  </footer>
+</form>
