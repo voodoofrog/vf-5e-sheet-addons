@@ -1,7 +1,8 @@
 # VoodooFrog's 5e Sheet Addons
 
-![Latest Release Download Count](https://img.shields.io/badge/dynamic/json?label=Downloads@latest&query=assets%5B1%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fvoodoofrog%2Fvf-5e-sheet-addons%2Freleases%2Flatest)
-![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvoodoofrog%2Ffoundryvtt-celebrate%2Fmain%2Fpublic%2Fmodule.json&label=Foundry%20Version&query=$.compatibility.minimum&colorB=orange)
+![GitHub Downloads (specific asset, latest release)](https://img.shields.io/github/downloads/voodoofrog/vf-5e-sheet-addons/latest/module.zip?style=for-the-badge&logo=github&label=Downloads%20(Latest%20Release)&color=%2388ff00)
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fvoodoofrog%2Fvf-5e-sheet-addons%2Freleases%2Fdownload%2F1.0.0-beta.2%2Fmodule.json&query=%24.compatibility.minimum&style=for-the-badge&label=Foundry%20Version&color=%23FF6E20)
+
 
 ## Basic Information
 
@@ -15,4 +16,6 @@ There are some settings in the module too, so that these features can be turned 
 
 Right now, this is just in beta, and I won't be submitting to the Foundry list until I'm sure it's fine.
 
+
+### The Module In Action
 ![a screenshot of the module in action](screenshot.png)
