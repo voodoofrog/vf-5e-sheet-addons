@@ -9,3 +9,5 @@ Furthermore, it does a very simple calculation of the total of all the spell pre
 There are some settings in the module too, so that these features can be turned on or off, and if you have any custom preparation style casting classes there is a menu in the settings to add their class names. Note that when entering these names you should use the name as it appears on the Spells tab of the sheet, title case and all. Again, this was the only way I could find to tie the sheet data to the actor data, but hey, it works!
 
 Right now, this is just in beta, and I won't be submitting to the Foundry list until I'm sure it's fine.
+
+![a screenshot of the module in action](screenshot.png)
