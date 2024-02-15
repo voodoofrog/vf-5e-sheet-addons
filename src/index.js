@@ -1,6 +1,7 @@
 import { MODULE_ID, PREP_SELECTOR, SETTINGS } from './constants';
 import { EditClasses } from './edit-classes';
-import '../styles/styles.css';
+import SpellBookManager from './spellbook-manager.js';
+import '../styles/styles.scss';
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS } = SETTINGS;
 
@@ -62,6 +63,7 @@ Hooks.once('init', async () => {
 
 Hooks.once('ready', () => {
   console.log('5e Sheet Addons | Ready');
+  new SpellBookManager().render(true, { focus: true });
 });
 
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
@@ -91,4 +93,9 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
       }
     }
   }
+});
+
+Hooks.on('createItem', async (item, options, userId) => {
+  // TODO: Create an application that will allow for setting sources
+  new SpellBookManager().render(true, { focus: true });
 });

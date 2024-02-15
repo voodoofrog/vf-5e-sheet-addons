@@ -1,12 +1,14 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
-import autoprefixer from 'autoprefixer';
-import postcssPresetEnv from 'postcss-preset-env';
-import postcssNesting from 'postcss-nesting';
-import fg from 'fast-glob';
+import preprocess from 'svelte-preprocess';
+import { postcssConfig, terserConfig } from '@typhonjs-fvtt/runtime/rollup';
 
 const PACKAGE_ID = 'modules/vf-5e-sheet-addons';
+const COMPRESS = false;
+const SOURCEMAPS = true;
 
-export default () => {
+export default (options) => {
+  const { mode } = options;
   return {
     root: 'src/',
     base: `/${PACKAGE_ID}/`,
@@ -17,9 +19,7 @@ export default () => {
       target: ['es2022']
     },
     css: {
-      postcss: {
-        plugins: [postcssNesting, autoprefixer, postcssPresetEnv]
-      }
+      postcss: postcssConfig({ compress: COMPRESS, sourceMap: SOURCEMAPS })
     },
     server: {
       port: 30001,
@@ -34,11 +34,12 @@ export default () => {
     build: {
       outDir: '../dist',
       emptyOutDir: true,
-      sourcemap: true,
+      sourcemap: SOURCEMAPS,
       brotliSize: true,
-      minify: false,
+      minify: COMPRESS ? 'terser' : false,
       target: ['es2022'],
-      terserOptions: void 0,
+      terserOptions: COMPRESS ? { ...terserConfig(), ecma: 2022 } : void 0,
+      copyPublicDir: mode === 'production' ? true : false,
       lib: {
         entry: './index.js',
         formats: ['es'],
@@ -46,18 +47,22 @@ export default () => {
       }
     },
 
+    optimizeDeps: {
+      esbuildOptions: {
+        target: 'es2022'
+      }
+    },
+
     plugins: [
-      {
-        name: 'watch-external',
-        async buildStart() {
-          const files = await fg(['public/**/*']);
-          for (const file of files) {
-            this.addWatchFile(file);
-          }
-        }
-      },
+      svelte({
+        compilerOptions: {
+          cssHash: ({ hash, css }) => `svelte-vf5es-${hash(css)}`
+        },
+        preprocess: preprocess()
+      }),
       resolve({
-        browser: true
+        browser: true,
+        dedupe: ['svelte']
       })
     ]
   };
