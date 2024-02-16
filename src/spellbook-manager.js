@@ -16,7 +16,7 @@ export default class SpellBookManager extends SvelteApplication {
         target: document.body
       }
     });
-    // console.log('****** ', options);
+
     return options;
   }
 }

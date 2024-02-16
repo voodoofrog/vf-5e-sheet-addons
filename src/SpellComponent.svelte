@@ -1,7 +1,7 @@
 <script>
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { updateDoc } from './update-doc.js';
-  import { MODULE_ID, PREP_SELECTOR, SETTINGS } from './constants';
+  import { MODULE_ID } from './constants';
 
   export let classes;
   export let item;
@@ -38,11 +38,20 @@
   </div>
   <div class="item-detail item-prep {$spell.system.preparation.mode === 'always' ? 'empty' : ''}">
     {#if $spell.system.preparation.mode !== 'always'}
-      <input type="checkbox" bind:checked={$spell.system.preparation.prepared} use:updateDoc={{ doc: spell, accessor: 'system.preparation.prepared' }} />
+      <input
+        type="checkbox"
+        bind:checked={$spell.system.preparation.prepared}
+        use:updateDoc={{ doc: spell, accessor: 'system.preparation.prepared' }}
+      />
     {/if}
   </div>
   <div class="item-detail item-source">
-    <select name="spell-source" class="spell-source roboto-upper unselect" bind:value={$spell.flags.source} use:updateDoc={{ doc: spell, accessor: 'flags.source' }}>
+    <select
+      name="spell-source"
+      class="spell-source roboto-upper unselect"
+      bind:value={$spell.flags.source}
+      use:updateDoc={{ doc: spell, accessor: 'flags.source' }}
+    >
       <option value="">None</option>
       {#each classes as cClass}
         <option value={cClass.name}>{cClass.name}</option>

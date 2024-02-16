@@ -1,16 +1,10 @@
 <svelte:options accessors={true} />
 
 <script>
-  import { getContext } from 'svelte';
-  import { flip } from 'svelte/animate';
-  import { rippleFocus } from '#runtime/svelte/action/animate';
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { DynReducerHelper } from '#runtime/svelte/store/reducer';
-  import { localize } from '#runtime/svelte/helper';
-  import { MODULE_ID, PREP_SELECTOR, SETTINGS } from './constants';
-  import { TJSInput } from '#standard/component';
-  import { spellStore, getPreparedCasterNames } from './index';
+  import { getPreparedCasterNames } from './index';
   import SpellComponent from './SpellComponent.svelte';
 
   export let elementRoot;
