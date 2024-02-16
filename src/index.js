@@ -66,11 +66,19 @@ Hooks.once('init', async () => {
 
 Hooks.once('ready', () => {
   console.log('5e Sheet Addons | Ready');
-  const actor = new TJSDocument(game.actors.get('ikQVvGJuzZu4r4Fv'));
-  new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
+  // const actor = new TJSDocument(game.actors.get('ikQVvGJuzZu4r4Fv'));
+  // new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
 });
 
+// .dnd5e2.sheet.actor.character .sheet-header > .right > div:last-child
+// $("p").css("background-color", "yellow");
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
+  const spellTab = $(html).find('form.interactable');
+  spellTab.append(`
+    <button type="button" class="spells-manage gold-button" aria-label="Manage Spell Sources">
+      <i class="fas fa-feather"></i>
+    </button>
+  `);
   if (data?.spellcasting) {
     let totalLimit = 0;
     for (const sc of data.spellcasting) {
