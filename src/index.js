@@ -1,3 +1,5 @@
+import { writable } from 'svelte/store';
+import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
 import { MODULE_ID, PREP_SELECTOR, SETTINGS } from './constants';
 import { EditClasses } from './edit-classes';
 import SpellBookManager from './spellbook-manager.js';
@@ -5,7 +7,7 @@ import '../styles/styles.scss';
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS } = SETTINGS;
 
-const getPreparedCasterNames = () => [
+export const getPreparedCasterNames = () => [
   game.i18n.localize(`${MODULE_ID}.class-names.artificer`),
   game.i18n.localize(`${MODULE_ID}.class-names.cleric`),
   game.i18n.localize(`${MODULE_ID}.class-names.druid`),
@@ -23,6 +25,7 @@ const getLimit = (actor, scData) => {
   } = spellcastingClass;
   return levels + scData?.ability?.value;
 };
+export const spellStore = writable([]);
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
   registerPackageDebugFlag(MODULE_ID);
@@ -63,7 +66,8 @@ Hooks.once('init', async () => {
 
 Hooks.once('ready', () => {
   console.log('5e Sheet Addons | Ready');
-  new SpellBookManager().render(true, { focus: true });
+  const actor = new TJSDocument(game.actors.get('ikQVvGJuzZu4r4Fv'));
+  new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
 });
 
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
@@ -97,5 +101,6 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
 
 Hooks.on('createItem', async (item, options, userId) => {
   // TODO: Create an application that will allow for setting sources
-  new SpellBookManager().render(true, { focus: true });
+  // const actor = game.actors.get('ikQVvGJuzZu4r4Fv');
+  // new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
 });
