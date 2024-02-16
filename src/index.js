@@ -48,6 +48,7 @@ const getLimit = (actor, { source, label }) => {
 const spellManagerButtonHandler = (event) => {
   const data = event.data;
   const actor = new TJSDocument(data.actor);
+  // TODO: Exclude cantrips
   new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
 };
 
@@ -100,17 +101,16 @@ Hooks.once('ready', () => {
 });
 
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
-  const spellSearch = $(html).find('item-list-controls[for="spellbook"] search ul.unlist.controls');
-  spellSearch.append(`
-    <li>
-      <button type="button" class="spells-manage unbutton filter-control active" aria-label="Manage Spell Sources">
-        <i class="fas fa-feather"></i>
-      </button>
-    </li>
-  `);
-  spellSearch.find('.spells-manage').on('click', { actor: data.actor }, spellManagerButtonHandler);
-  if (data?.spellcasting) {
-    let totalLimit = 0;
+  if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
+    const spellSearch = $(html).find('item-list-controls[for="spellbook"] search ul.unlist.controls');
+    spellSearch.append(`
+      <li>
+        <button type="button" class="spells-manage unbutton filter-control active" aria-label="Manage Spell Sources">
+          <i class="fas fa-feather"></i>
+        </button>
+      </li>
+    `);
+    spellSearch.find('.spells-manage').on('click', { actor: data.actor }, spellManagerButtonHandler);
 
     $(html)
       .find('.spells-list .card')
@@ -120,6 +120,9 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         const source = data?.actor?.items?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
         $(s).attr('data-spell-source', `${source}`);
       });
+  }
+  if (data?.spellcasting) {
+    let totalLimit = 0;
 
     for (const sc of data.spellcasting) {
       const { label } = sc;
@@ -164,6 +167,7 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
 
 // Hooks.on('createItem', async (item, options, userId) => {});
 
+// TODO: investigate how this will interact with characters who have prepared spells but no sources
 Hooks.on('updateItem', async (item, data) => {
   if (item.type === 'spell' && item.parent?.type === 'character') {
     const source = item.getFlag(MODULE_ID, 'source');
