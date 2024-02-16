@@ -90,13 +90,3 @@
 #client-settings form section[data-tab='vf-5e-sheet-addons'] .form-group > label {
   flex: 4;
 }
-
-.dnd5e2.sheet.actor.character .spells-manage {
-  display: none;
-  position: absolute;
-  inset: auto 3.25rem 1rem auto;
-}
-
-.dnd5e2.sheet.actor.character form:is(.tab-spells) .spells-manage {
-  display: block;
-}

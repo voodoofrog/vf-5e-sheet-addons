@@ -27,7 +27,6 @@
     <div class="items-section card">
       <div class="items-header header">
         <h3 class="item-name spell-header">Spell</h3>
-        <div class="item-header item-prep">Prepared</div>
         <div class="item-header item-source">Source</div>
       </div>
       <ol class="item-list unlist">

@@ -5,16 +5,7 @@
 
   export let classes;
   export let item;
-  item.setFlag(MODULE_ID, 'source', '');
   const spell = new TJSDocument(item);
-
-  /*
-                <select bind:value={$storeEase}>
-                {#each easingList as entry}
-                   <option value={easingFunc[entry]}>{entry}</option>
-                {/each}
-             </select>
-  */
 </script>
 
 <li class="item">
@@ -36,21 +27,11 @@
       {/if}
     </div>
   </div>
-  <div class="item-detail item-prep {$spell.system.preparation.mode === 'always' ? 'empty' : ''}">
-    {#if $spell.system.preparation.mode !== 'always'}
-      <input
-        type="checkbox"
-        bind:checked={$spell.system.preparation.prepared}
-        use:updateDoc={{ doc: spell, accessor: 'system.preparation.prepared' }}
-      />
-    {/if}
-  </div>
   <div class="item-detail item-source">
     <select
       name="spell-source"
       class="spell-source roboto-upper unselect"
-      bind:value={$spell.flags.source}
-      use:updateDoc={{ doc: spell, accessor: 'flags.source' }}
+      use:updateDoc={{ doc: spell, accessor: `flags.${MODULE_ID}.source` }}
     >
       <option value="">None</option>
       {#each classes as cClass}
