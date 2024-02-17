@@ -3,31 +3,34 @@
 <script>
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
-  import { DynReducerHelper } from '#runtime/svelte/store/reducer';
-  import { getPreparedCasterNames } from './index';
+  import { localize } from "#runtime/svelte/helper";
+  import { getPreparedCasterNames } from '../index';
   import SpellComponent from './SpellComponent.svelte';
+  import { MODULE_ID, SPELL_MANAGER } from '../constants';
 
   export let elementRoot;
   export let actor = new TJSDocument();
+  export let minLevel = 1;
 
-  const filterSearch = DynReducerHelper.filters.regexObjectQuery('type');
-  filterSearch.set('spell');
+  const spellFilter = (data) => data.type === 'spell';
+  const levelFilter = (data) => data.system.level >= minLevel;
 
   const spells = actor.embedded.create(Item, {
     name: 'spell',
-    filters: [filterSearch],
-    sort: (a, b) => a.name.localeCompare(b.name)
+    filters: [spellFilter, levelFilter],
+    sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
   });
 
-  const classes = actor.get().items.filter((i) => i.type === 'class' && getPreparedCasterNames().includes(i.name));
+  const classes = actor.get().items.filter((i) => i.type === 'class' && getPreparedCasterNames().includes(i.name)).map(c => c.name);
 </script>
 
 <ApplicationShell bind:elementRoot>
   <main>
     <div class="items-section card">
       <div class="items-header header">
-        <h3 class="item-name spell-header">Spell</h3>
-        <div class="item-header item-source">Source</div>
+        <h3 class="item-name spell-header">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.name`)}</h3>
+        <div class="item-header spell-level">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.level`)}</div>
+        <div class="item-header item-source">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.source`)}</div>
       </div>
       <ol class="item-list unlist">
         {#each [...$spells] as item (item.id)}
@@ -76,16 +79,12 @@
           position: relative;
         }
 
-        .items-header .item-prep {
-          width: 60px;
+        .items-header .spell-level {
+          width: 50px;
         }
 
         .items-header .item-source {
           width: 180px;
-        }
-
-        .items-header .item-prep {
-          flex-direction: column;
         }
 
         .header h3 {

@@ -43,8 +43,13 @@
         "hint": "Untick this if you don't want the useable spell preparation icons in the spells tab to change colour when you reach or exceed your limit."
       }
     },
-    "spellbook-manager": {
-      "title": "Testing"
+    "spell-manager": {
+      "title": "Spell Source Manager",
+      "headers": {
+        "name": "Spell",
+        "level": "Level",
+        "source": "Source"
+      }
     }
   }
 }

@@ -7,3 +7,4 @@ export const SETTINGS = {
   SHOW_PREP_COLOURS: 'show-prep-limit-colours',
   USE_CLASS_SOURCES: 'use-class-sources'
 };
+export const SPELL_MANAGER = 'spell-manager';

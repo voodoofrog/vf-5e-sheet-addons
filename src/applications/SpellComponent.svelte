@@ -1,7 +1,8 @@
 <script>
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
-  import { updateDoc } from './update-doc.js';
-  import { MODULE_ID } from './constants';
+  import { localize } from "#runtime/svelte/helper";
+  import { updateDoc } from '../update-doc.js';
+  import { MODULE_ID } from '../constants';
 
   export let classes;
   export let item;
@@ -16,17 +17,18 @@
     </div>
     <div class="tags">
       {#if $spell.system.properties.has('ritual')}
-        <span aria-label="Ritual">
+        <span aria-label="{localize('DND5E.Item.Property.Ritual')}">
           <dnd5e-icon src="systems/dnd5e/icons/svg/items/spell.svg"></dnd5e-icon>
         </span>
       {/if}
       {#if $spell.system.properties.has('concentration')}
-        <span aria-label="Concentration">
+        <span aria-label="{localize('DND5E.Item.Property.Concentration')}">
           <dnd5e-icon src="systems/dnd5e/icons/svg/statuses/concentrating.svg"></dnd5e-icon>
         </span>
       {/if}
     </div>
   </div>
+  <div class="item-detail spell-level">{$spell.system.level}</div>
   <div class="item-detail item-source">
     <select
       name="spell-source"
@@ -34,8 +36,8 @@
       use:updateDoc={{ doc: spell, accessor: `flags.${MODULE_ID}.source` }}
     >
       <option value="">None</option>
-      {#each classes as cClass}
-        <option value={cClass.name}>{cClass.name}</option>
+      {#each classes as c}
+        <option value={c}>{c}</option>
       {/each}
     </select>
   </div>
@@ -56,16 +58,12 @@
     position: relative;
   }
 
-  .item .item-prep {
-    width: 60px;
+  .item .spell-level {
+    width: 50px;
   }
 
   .item .item-source {
     width: 180px;
-  }
-
-  .item .item-prep {
-    flex-direction: column;
   }
 
   .item .item-detail {

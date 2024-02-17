@@ -1,11 +1,13 @@
 import { writable } from 'svelte/store';
 import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
+import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { MODULE_ID, PREP_SELECTOR, SETTINGS } from './constants';
-import { EditClasses } from './edit-classes';
-import SpellBookManager from './spellbook-manager.js';
+import { EditClassesButton } from './applications/edit-classes-button.js';
+import SpellBookManager from './applications/spellbook-manager.js';
 import '../styles/styles.scss';
 
 export const spellStore = writable([]);
+export const gameSettings = new TJSGameSettings(MODULE_ID);
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS, USE_CLASS_SOURCES } =
   SETTINGS;
@@ -48,8 +50,7 @@ const getLimit = (actor, { source, label }) => {
 const spellManagerButtonHandler = (event) => {
   const data = event.data;
   const actor = new TJSDocument(data.actor);
-  // TODO: Exclude cantrips
-  new SpellBookManager({ svelte: { props: { actor } } }).render(true, { focus: true });
+  new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
 };
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -57,41 +58,57 @@ Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
 });
 
 Hooks.once('init', async () => {
-  await game.settings.register(MODULE_ID, ADDITIONAL_CLASS_NAMES, {
-    name: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.name`,
-    hint: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.hint`,
-    scope: 'world',
-    config: false,
-    type: Array,
-    default: ['foo', 'bar']
-  });
   await game.settings.registerMenu(MODULE_ID, EDIT_CLASS_NAMES_MENU, {
     name: `${MODULE_ID}.settings.${EDIT_CLASS_NAMES_MENU}.name`,
     label: `${MODULE_ID}.settings.${EDIT_CLASS_NAMES_MENU}.label`,
     icon: 'fas fa-bars',
-    type: EditClasses
+    type: EditClassesButton
   });
-  await game.settings.register(MODULE_ID, SHOW_PREP_NUMBER, {
-    name: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.name`,
-    hint: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.hint`,
-    scope: 'client',
-    config: true,
-    type: Boolean,
-    default: true
+  await gameSettings.register({
+    namespace: MODULE_ID,
+    key: ADDITIONAL_CLASS_NAMES,
+    options: {
+      name: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.name`,
+      hint: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.hint`,
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: ['foo', 'bar']
+    }
   });
-  await game.settings.register(MODULE_ID, SHOW_PREP_COLOURS, {
-    name: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.name`,
-    hint: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.hint`,
-    scope: 'client',
-    config: true,
-    type: Boolean,
-    default: true
+  await gameSettings.register({
+    namespace: MODULE_ID,
+    key: SHOW_PREP_NUMBER,
+    options: {
+      name: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.name`,
+      hint: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.hint`,
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true
+    }
   });
-  await game.settings.register(MODULE_ID, USE_CLASS_SOURCES, {
-    scope: 'world',
-    config: false,
-    type: Boolean,
-    default: true
+  await gameSettings.register({
+    namespace: MODULE_ID,
+    key: SHOW_PREP_COLOURS,
+    options: {
+      name: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.name`,
+      hint: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.hint`,
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true
+    }
+  });
+  await gameSettings.register({
+    namespace: MODULE_ID,
+    key: USE_CLASS_SOURCES,
+    options: {
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: true
+    }
   });
   CONFIG.debug.hooks = false;
 });
@@ -120,6 +137,24 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         const source = data?.actor?.items?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
         $(s).attr('data-spell-source', `${source}`);
       });
+
+    $(html)
+      .find('.spells-list .card .item-list li')
+      .each((idx, s) => {
+        const source = data?.actor?.items?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
+        if (source) {
+          $(s).find('.subtitle').append(` (${source})`);
+        }
+      });
+
+    const filterList = $(html).find('item-list-controls[for="spellbook"] search .filter-list');
+    for (const c of getPreparedCasterNames()) {
+      filterList.append(`
+        <li>
+          <button type="button" class="filter-item" data-filter="${c}">${c}</button>
+        </li>
+      `);
+    }
   }
   if (data?.spellcasting) {
     let totalLimit = 0;

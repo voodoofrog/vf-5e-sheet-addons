@@ -1,14 +1,15 @@
 import { SvelteApplication } from '#runtime/svelte/application';
 import SpellbookManagerShell from './SpellbookManagerShell.svelte';
+import { MODULE_ID, SPELL_MANAGER } from '../constants';
 
 export default class SpellBookManager extends SvelteApplication {
   static get defaultOptions() {
     const options = foundry.utils.mergeObject(super.defaultOptions, {
-      id: 'vf5e-spellbook-manager',
-      classes: ['tjs-essential-svelte-esm'],
+      id: `${MODULE_ID}-${SPELL_MANAGER}`,
+      classes: [MODULE_ID],
       resizable: true,
       minimizable: true,
-      title: 'Spellbook Manager',
+      title: game.i18n.localize(`${MODULE_ID}.${SPELL_MANAGER}.title`),
       width: 550,
 
       svelte: {
