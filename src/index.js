@@ -180,11 +180,13 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         for (const cn of getPreparedCasterNames()) {
           const limit = data?.actor?.getFlag(MODULE_ID, 'prepLimits')?.[cn];
           if (limit?.current >= limit?.max) {
-            const prepSelector = $(html).find(`.item[data-spell-source="${cn}"] ${PREP_SELECTOR}`);
+            const itemEntry = $(html).find(`.item[data-spell-source="${cn}"]`);
             if (limit?.current > limit?.max) {
-              prepSelector.addClass('prep-exceeded');
+              itemEntry.find(PREP_SELECTOR).addClass('prep-exceeded');
+              itemEntry.addClass('prep-exceeded');
             } else {
-              prepSelector.addClass('prep-limit');
+              itemEntry.find(PREP_SELECTOR).addClass('prep-limit');
+              itemEntry.addClass('prep-limit');
             }
           }
         }

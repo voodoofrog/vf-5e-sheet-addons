@@ -1,10 +1,20 @@
-.dnd5e2 .items-section .item .item-controls .item-control {
+.dnd5e2 .items-section .item {
   &.prep-limit {
-    color: var(--dnd5e-color-green);
+    background-color: rgba(32, 91, 21, 0.2);
   }
 
   &.prep-exceeded {
-    color: var(--dnd5e-color-red);
+    background-color: rgba(237, 28, 36, 0.2);
+  }
+
+  & .item-controls .item-control {
+    &.prep-limit {
+      color: var(--dnd5e-color-green);
+    }
+
+    &.prep-exceeded {
+      color: var(--dnd5e-color-red);
+    }
   }
 }
 
