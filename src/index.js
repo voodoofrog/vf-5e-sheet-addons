@@ -127,7 +127,7 @@ Hooks.once('init', async () => {
       }
     }
   ]);
-  CONFIG.debug.hooks = true;
+  CONFIG.debug.hooks = false;
 });
 
 Hooks.once('ready', () => {
