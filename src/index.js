@@ -22,6 +22,7 @@ export const getPreparedCasterNames = () => [
 ];
 
 const getSpellcastingClassBySource = (actor, source) => Object.values(actor?.classes).find((c) => source === c.name);
+
 const getSpellcastingClassByLabel = (actor, label) =>
   Object.values(actor?.classes).find(
     (c) => label === game.i18n.localize('DND5E.SpellcastingClass').replace('{class}', c.name)
@@ -64,52 +65,56 @@ Hooks.once('init', async () => {
     icon: 'fas fa-bars',
     type: EditClassesButton
   });
-  await gameSettings.register({
-    namespace: MODULE_ID,
-    key: ADDITIONAL_CLASS_NAMES,
-    options: {
-      name: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.name`,
-      hint: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.hint`,
-      scope: 'world',
-      config: false,
-      type: Array,
-      default: ['foo', 'bar']
+  await gameSettings.registerAll([
+    {
+      namespace: MODULE_ID,
+      key: ADDITIONAL_CLASS_NAMES,
+      options: {
+        name: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.name`,
+        hint: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.hint`,
+        scope: 'world',
+        config: false,
+        type: Array,
+        default: ['foo', 'bar']
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: SHOW_PREP_NUMBER,
+      options: {
+        name: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.name`,
+        hint: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: SHOW_PREP_COLOURS,
+      options: {
+        name: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.name`,
+        hint: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: USE_CLASS_SOURCES,
+      options: {
+        name: `${MODULE_ID}.settings.${USE_CLASS_SOURCES}.name`,
+        hint: `${MODULE_ID}.settings.${USE_CLASS_SOURCES}.hint`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true
+      }
     }
-  });
-  await gameSettings.register({
-    namespace: MODULE_ID,
-    key: SHOW_PREP_NUMBER,
-    options: {
-      name: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.name`,
-      hint: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.hint`,
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true
-    }
-  });
-  await gameSettings.register({
-    namespace: MODULE_ID,
-    key: SHOW_PREP_COLOURS,
-    options: {
-      name: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.name`,
-      hint: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.hint`,
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true
-    }
-  });
-  await gameSettings.register({
-    namespace: MODULE_ID,
-    key: USE_CLASS_SOURCES,
-    options: {
-      scope: 'world',
-      config: false,
-      type: Boolean,
-      default: true
-    }
-  });
+  ]);
   CONFIG.debug.hooks = false;
 });
 
@@ -119,43 +124,49 @@ Hooks.once('ready', () => {
 
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
   if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
-    const spellSearch = $(html).find('item-list-controls[for="spellbook"] search ul.unlist.controls');
-    spellSearch.append(`
-      <li>
-        <button type="button" class="spells-manage unbutton filter-control active" aria-label="Manage Spell Sources">
-          <i class="fas fa-feather"></i>
-        </button>
-      </li>
+    // Add spell manager button after spell list controls
+    const spellListControls = $(html).find('item-list-controls[for="spellbook"]');
+    spellListControls.wrap('<div class="controls-wrapper"></div>');
+    const wrapper = spellListControls.parent();
+    wrapper.append(`
+      <button type="button" class="spells-manage gold-button" aria-label="Manage Spell Sources">
+        <i class="fas fa-feather"></i>
+      </button>
     `);
-    spellSearch.find('.spells-manage').on('click', { actor: data.actor }, spellManagerButtonHandler);
+    wrapper.find('.spells-manage').on('click', { actor: data?.actor }, spellManagerButtonHandler);
 
-    $(html)
-      .find('.spells-list .card')
-      .not('[data-level="0"]')
-      .find('.item-list li')
-      .each((idx, s) => {
-        const source = data?.actor?.items?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
-        $(s).attr('data-spell-source', `${source}`);
-      });
-
-    $(html)
-      .find('.spells-list .card .item-list li')
-      .each((idx, s) => {
-        const source = data?.actor?.items?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
-        if (source) {
-          $(s).find('.subtitle').append(` (${source})`);
-        }
-      });
-
-    const filterList = $(html).find('item-list-controls[for="spellbook"] search .filter-list');
-    for (const c of getPreparedCasterNames()) {
+    // Add new filter options for valid classes
+    const filterList = spellListControls.find('search .filter-list');
+    const actorItems = data?.actor?.items;
+    const actorClasses = actorItems?.filter((i) => i.type === 'class');
+    for (const c of getPreparedCasterNames().filter((cn) => actorClasses.some((ac) => ac.name === cn))) {
       filterList.append(`
         <li>
           <button type="button" class="filter-item" data-filter="${c}">${c}</button>
         </li>
       `);
     }
+    // TODO: Add listeners for filters and hide invalid spells
+
+    // Add data attribute to spells
+    const spellListCards = $(html).find('.spells-list .card');
+    spellListCards
+      .not('[data-level="0"]')
+      .find('.item-list li')
+      .each((idx, s) => {
+        const source = actorItems?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
+        $(s).attr('data-spell-source', `${source}`);
+      });
+
+    // Add source name to spell subtitles
+    spellListCards.find('.item-list li').each((idx, s) => {
+      const source = actorItems?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
+      if (source) {
+        $(s).find('.subtitle').append(` (${source})`);
+      }
+    });
   }
+
   if (data?.spellcasting) {
     let totalLimit = 0;
 
@@ -164,9 +175,10 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
       if (getPreparedCasterNames().some((cn) => label.includes(cn))) {
         const limit = getLimit(data?.actor, { label: sc?.label });
         totalLimit += limit;
+
+        // Add prep limits to spellcasting cards
         if (game.settings.get(MODULE_ID, SHOW_PREP_NUMBER)) {
-          const spellcastingBox = $(html).find(`.spellcasting.card:contains(${label}) .info`);
-          spellcastingBox.append(`
+          $(html).find(`.spellcasting.card:contains(${label}) .info`).append(`
             <div class="preparation">
               <span class="label">${game.i18n.localize(`${MODULE_ID}.spellcasting.prep-limit`)}</span>
               <span class="value">${limit}</span>
@@ -175,8 +187,10 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         }
       }
     }
+
     if (game.settings.get(MODULE_ID, SHOW_PREP_COLOURS)) {
       if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
+        // Add classes for prep limits display for sourced spells
         for (const cn of getPreparedCasterNames()) {
           const limit = data?.actor?.getFlag(MODULE_ID, 'prepLimits')?.[cn];
           if (limit?.current >= limit?.max) {
@@ -191,6 +205,7 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
           }
         }
       } else {
+        // Add classes for simple prep limits display
         const prepSelector = $(html).find(PREP_SELECTOR);
         if (data?.preparedSpells === totalLimit) {
           prepSelector.addClass('prep-limit');
@@ -202,7 +217,12 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
   }
 });
 
-// Hooks.on('createItem', async (item, options, userId) => {});
+Hooks.on('createItem', async (item, config, userId) => {
+  /* if (item.type === 'spell' && item.parent?.type === 'character') {
+    const actor = new TJSDocument(item.parent);
+    new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
+  }*/
+});
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources
 Hooks.on('updateItem', async (item, data) => {

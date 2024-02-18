@@ -7,7 +7,7 @@
     background-color: rgba(237, 28, 36, 0.1);
   }
 
-  & .item-controls .item-control {
+  .item-controls .item-control {
     &.prep-limit {
       color: var(--dnd5e-color-green);
     }
@@ -20,4 +20,17 @@
 
 #client-settings form section[data-tab='vf-5e-sheet-addons'] .form-group > label {
   flex: 4;
+}
+
+.dnd5e2 .tab.spells dnd5e-inventory .controls-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  item-list-controls {
+    flex-grow: 1;
+  }
 }
