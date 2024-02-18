@@ -14,14 +14,13 @@
     },
     "settings": {
       "additional-class-names": {
-        "name": "Additional Prepared Caster class names",
-        "hint": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names as they appear in the box."
+        "name": "Additional prepared caster class names"
       },
       "edit-class-names-menu": {
-        "name": "Edit class names",
+        "name": "Edit prepared caster class names",
         "label": "Edit",
-        "title": "Edit Class Names",
-        "note": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names as they appear in the box.",
+        "title": "Edit Prepared Caster Class Names",
+        "note": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names such as 'Wizard', not 'wizard'.",
         "header": {
           "name": "Class Name"
         },

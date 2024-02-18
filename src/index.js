@@ -85,7 +85,6 @@ Hooks.once('init', async () => {
       key: ADDITIONAL_CLASS_NAMES,
       options: {
         name: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.name`,
-        hint: `${MODULE_ID}.settings.${ADDITIONAL_CLASS_NAMES}.hint`,
         scope: 'world',
         config: false,
         type: Array,
