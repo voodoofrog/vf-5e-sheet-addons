@@ -8,6 +8,7 @@ import '../styles/styles.scss';
 
 export const spellStore = writable([]);
 export const gameSettings = new TJSGameSettings(MODULE_ID);
+const ENABLE_FILTERS = false;
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS, USE_CLASS_SOURCES } =
   SETTINGS;
@@ -52,6 +53,19 @@ const spellManagerButtonHandler = (event) => {
   const data = event.data;
   const actor = new TJSDocument(data.actor);
   new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
+};
+
+const filterHandler = (event) => {
+  const target = $(event?.currentTarget);
+  const filter = target?.data('filter');
+  const spellItems = event?.data;
+  if (!target?.hasClass('active')) {
+    spellItems.not(`[data-spell-source="${filter}"]`).hide();
+    target.addClass('active');
+  } else {
+    spellItems.not(`[data-spell-source="${filter}"]`).show();
+    target.removeClass('active');
+  }
 };
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -125,31 +139,35 @@ Hooks.once('ready', () => {
 Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
   if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
     // Add spell manager button after spell list controls
+    $(html).find('.tab.spells dnd5e-inventory').addClass('show-manager');
     const spellListControls = $(html).find('item-list-controls[for="spellbook"]');
-    spellListControls.wrap('<div class="controls-wrapper"></div>');
-    const wrapper = spellListControls.parent();
-    wrapper.append(`
+    spellListControls.after(`
       <button type="button" class="spells-manage gold-button" aria-label="Manage Spell Sources">
         <i class="fas fa-feather"></i>
       </button>
     `);
-    wrapper.find('.spells-manage').on('click', { actor: data?.actor }, spellManagerButtonHandler);
+    spellListControls.parent().find('.spells-manage').on('click', { actor: data?.actor }, spellManagerButtonHandler);
 
     // Add new filter options for valid classes
-    const filterList = spellListControls.find('search .filter-list');
+    const spellListCards = $(html).find('.spells-list .card');
     const actorItems = data?.actor?.items;
-    const actorClasses = actorItems?.filter((i) => i.type === 'class');
-    for (const c of getPreparedCasterNames().filter((cn) => actorClasses.some((ac) => ac.name === cn))) {
-      filterList.append(`
+    const spellItems = spellListCards.find('.item-list li');
+    // TODO: Find a solution to re-enable filters on re-render
+    if (ENABLE_FILTERS) {
+      const filterList = spellListControls.find('search .filter-list');
+      const actorClasses = actorItems?.filter((i) => i.type === 'class');
+      const prepText = game.i18n.localize(`${MODULE_ID}.spellcasting.preparable`);
+      for (const c of getPreparedCasterNames().filter((cn) => actorClasses.some((ac) => ac.name === cn))) {
+        filterList.append(`
         <li>
-          <button type="button" class="filter-item" data-filter="${c}">${c}</button>
+          <button type="button" class="filter-item" data-filter="${c}">${c} ${prepText}</button>
         </li>
       `);
+        filterList.find(`button[data-filter="${c}"]`).on('click', spellItems, filterHandler);
+      }
     }
-    // TODO: Add listeners for filters and hide invalid spells
 
     // Add data attribute to spells
-    const spellListCards = $(html).find('.spells-list .card');
     spellListCards
       .not('[data-level="0"]')
       .find('.item-list li')
@@ -159,7 +177,7 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
       });
 
     // Add source name to spell subtitles
-    spellListCards.find('.item-list li').each((idx, s) => {
+    spellItems.each((idx, s) => {
       const source = actorItems?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
       if (source) {
         $(s).find('.subtitle').append(` (${source})`);
@@ -217,12 +235,12 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
   }
 });
 
-Hooks.on('createItem', async (item, config, userId) => {
-  /* if (item.type === 'spell' && item.parent?.type === 'character') {
+/* Hooks.on('createItem', async (item, config, userId) => {
+   if (item.type === 'spell' && item.parent?.type === 'character') {
     const actor = new TJSDocument(item.parent);
     new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
-  }*/
-});
+  }
+});*/
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources
 Hooks.on('updateItem', async (item, data) => {

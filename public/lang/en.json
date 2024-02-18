@@ -9,7 +9,8 @@
     },
     "spellcasting": {
       "prep-limit": "P. Limit",
-      "block-title": "Spellcasting"
+      "block-title": "Spellcasting",
+      "preparable": "Prep."
     },
     "settings": {
       "additional-class-names": {
