@@ -16,6 +16,8 @@ There are settings in the module too, so that these features can be turned on or
 
 Right now, this is just in beta, and I won't be submitting to the Foundry list until I'm sure it's fine and I have written proper documentation.
 
+## Install
+Manifest: `https://github.com/voodoofrog/vf-5e-sheet-addons/releases/latest/download/module.json`
 
 ### The Module In Action
 ![a screenshot of the module in action](screenshot.png)
