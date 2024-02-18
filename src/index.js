@@ -8,7 +8,8 @@ import '../styles/styles.scss';
 
 export const spellStore = writable([]);
 export const gameSettings = new TJSGameSettings(MODULE_ID);
-const ENABLE_FILTERS = false;
+let originalFilterItems;
+let _filterItem;
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS, USE_CLASS_SOURCES } =
   SETTINGS;
@@ -55,17 +56,15 @@ const spellManagerButtonHandler = (event) => {
   new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
 };
 
-const filterHandler = (event) => {
-  const target = $(event?.currentTarget);
-  const filter = target?.data('filter');
-  const spellItems = event?.data;
-  if (!target?.hasClass('active')) {
-    spellItems.not(`[data-spell-source="${filter}"]`).hide();
-    target.addClass('active');
+const filterClickHandler = (event) => {
+  const filter = $(event?.currentTarget)?.data('filter');
+  const sheet = event?.data;
+  if (sheet._filters.spellbook.properties.has(filter)) {
+    sheet._filters.spellbook.properties.delete(filter);
   } else {
-    spellItems.not(`[data-spell-source="${filter}"]`).show();
-    target.removeClass('active');
+    sheet._filters.spellbook.properties.add(filter);
   }
+  sheet.render();
 };
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -135,8 +134,10 @@ Hooks.once('ready', () => {
   console.log('5e Sheet Addons | Ready');
 });
 
-Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
+Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
+    const actor = data?.actor;
+
     // Add spell manager button after spell list controls
     $(html).find('.tab.spells dnd5e-inventory').addClass('show-manager');
     const spellListControls = $(html).find('item-list-controls[for="spellbook"]');
@@ -145,25 +146,23 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         <i class="fas fa-feather"></i>
       </button>
     `);
-    spellListControls.parent().find('.spells-manage').on('click', { actor: data?.actor }, spellManagerButtonHandler);
+    spellListControls.parent().find('.spells-manage').on('click', { actor }, spellManagerButtonHandler);
 
     // Add new filter options for valid classes
     const spellListCards = $(html).find('.spells-list .card');
     const actorItems = data?.actor?.items;
     const spellItems = spellListCards.find('.item-list li');
-    // TODO: Find a solution to re-enable filters on re-render
-    if (ENABLE_FILTERS) {
-      const filterList = spellListControls.find('search .filter-list');
-      const actorClasses = actorItems?.filter((i) => i.type === 'class');
-      const prepText = game.i18n.localize(`${MODULE_ID}.spellcasting.preparable`);
-      for (const c of getPreparedCasterNames().filter((cn) => actorClasses.some((ac) => ac.name === cn))) {
-        filterList.append(`
+    const filterList = spellListControls.find('search .filter-list');
+    const actorClasses = actorItems?.filter((i) => i.type === 'class');
+    const prepText = game.i18n.localize(`${MODULE_ID}.spellcasting.preparable`);
+    for (const c of getPreparedCasterNames().filter((cn) => actorClasses.some((ac) => ac.name === cn))) {
+      const enabled = sheet._filters.spellbook.properties.has(c);
+      filterList.append(`
         <li>
-          <button type="button" class="filter-item" data-filter="${c}">${c} ${prepText}</button>
+          <button type="button" class="filter-item ${enabled ? 'active' : ''}" data-filter="${c}">${c} ${prepText}</button>
         </li>
       `);
-        filterList.find(`button[data-filter="${c}"]`).on('click', spellItems, filterHandler);
-      }
+      filterList.find(`button[data-filter="${c}"]`).on('click', sheet, filterClickHandler);
     }
 
     // Add data attribute to spells
@@ -174,6 +173,18 @@ Hooks.on('renderActorSheet5eCharacter2', (_, [html], data) => {
         const source = actorItems?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, 'source');
         $(s).attr('data-spell-source', `${source}`);
       });
+
+    // Render the active filters
+    sheet._filterItems = (items, filters) => {
+      const retVal = originalFilterItems.call({ _filterItem, actor }, items, filters);
+      const sources = new Set(getPreparedCasterNames());
+
+      return retVal.filter((item) => {
+        const sourcesFilter = sources.intersection(filters);
+        if (sourcesFilter.size && !sourcesFilter.has(item.getFlag(MODULE_ID, 'source'))) return false;
+        return true;
+      });
+    };
 
     // Add source name to spell subtitles
     spellItems.each((idx, s) => {
@@ -257,4 +268,9 @@ Hooks.on('updateItem', async (item, data) => {
       item.parent.setFlag(MODULE_ID, 'prepLimits', prepLimits);
     }
   }
+});
+
+Hooks.on('getActorSheetHeaderButtons', (sheet) => {
+  originalFilterItems = sheet._filterItems;
+  _filterItem = sheet._filterItem;
 });
