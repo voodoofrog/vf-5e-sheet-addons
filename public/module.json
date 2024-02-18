@@ -26,9 +26,7 @@
   "styles": [
     "style.css"
   ],
-  "templates": [
-    "./templates/edit-classes.hbs"
-  ],
+  "templates": [],
   "packs": [],
   "languages": [
     {
