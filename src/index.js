@@ -9,6 +9,7 @@ import '../styles/styles.scss';
 export const spellStore = writable([]);
 export const gameSettings = new TJSGameSettings(MODULE_ID);
 let originalFilterItems;
+let originalFilterItem;
 
 const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS, USE_CLASS_SOURCES } =
   SETTINGS;
@@ -175,7 +176,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
 
     // Render the active filters
     sheet._filterItems = (items, filters) => {
-      const retVal = originalFilterItems.call({ _filterItem: actor?.sheet?._filterItem, actor }, items, filters);
+      const retVal = originalFilterItems.call({ _filterItem: originalFilterItem, actor }, items, filters);
       const sources = new Set(getPreparedCasterNames());
 
       return retVal.filter((item) => {
@@ -270,5 +271,10 @@ Hooks.on('updateItem', async (item, data) => {
 });
 
 Hooks.on('getActorSheetHeaderButtons', (sheet) => {
-  originalFilterItems = sheet._filterItems;
+  if (!originalFilterItems) {
+    originalFilterItems = sheet._filterItems;
+  }
+  if (!originalFilterItem) {
+    originalFilterItem = sheet._filterItem;
+  }
 });
