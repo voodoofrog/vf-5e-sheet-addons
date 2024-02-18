@@ -29,7 +29,7 @@ jobs:
       - run: npm install
 
       # Build distribution.
-      - run: npm run build
+      - run: npm run build:prod
 
       # Create a zip file with all files required by the module to add to the release.
       - run: cd dist && zip -r "$OLDPWD/module.zip" .

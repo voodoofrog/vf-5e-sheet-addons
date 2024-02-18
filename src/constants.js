@@ -4,5 +4,7 @@ export const SETTINGS = {
   ADDITIONAL_CLASS_NAMES: 'additional-class-names',
   EDIT_CLASS_NAMES_MENU: 'edit-class-names-menu',
   SHOW_PREP_NUMBER: 'show-prep-limit-number',
-  SHOW_PREP_COLOURS: 'show-prep-limit-colours'
+  SHOW_PREP_COLOURS: 'show-prep-limit-colours',
+  USE_CLASS_SOURCES: 'use-class-sources'
 };
+export const SPELL_MANAGER = 'spell-manager';
