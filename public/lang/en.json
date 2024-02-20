@@ -8,8 +8,6 @@
       "wizard": "Wizard"
     },
     "spellcasting": {
-      "prep-limit": "P. Limit",
-      "block-title": "Spellcasting",
       "preparable": "Prep."
     },
     "settings": {
@@ -34,26 +32,34 @@
           "delete": "Delete this name"
         }
       },
-      "show-prep-limit-number": {
-        "name": "Show preparation limit",
-        "hint": "Untick this if you don't want to see the Prepared Spells Limit (P. Limit) in the Spellcasting box at the top of the spells tab. You will need to reopen sheets to see the change."
-      },
       "show-prep-limit-colours": {
         "name": "Change colours for preparable spells",
-        "hint": "Untick this if you don't want the useable spell backgrounds and preparation icons in the spells tab to change colour when you reach or exceed your limit. You will need to reopen sheets to see the change."
+        "hint": "If ticked, changes the backgrounds and preparation icons color for preparable spells in the spells tab when you reach or exceed your limit. You will need to reopen sheets to see the change."
       },
       "use-class-sources": {
         "name": "Use class sources",
-        "hint": "Untick this if you don't want to manage spells for preparation spellcasters. You will need to reopen sheets to see the change."
+        "hint": "If ticked, allows you to manage spell sources for preparation spellcasters. You will need to reopen sheets to see the change."
+      },
+      "prep-bar-top": {
+        "name": "Spell preparation bar at top",
+        "hint": "If ticked, shows a spell preparation bar at the top of the spells tab. You will need to reopen sheets to see the change."
+      },
+      "prep-bar-bottom": {
+        "name": "Spell preparation bar at bottom",
+        "hint": "If ticked, shows a spell preparation bar at the bottom of the spells tab. You will need to reopen sheets to see the change."
       }
     },
     "spell-manager": {
-      "title": "Spell Source Manager",
+      "title": "Prepared Spell Source Manager",
       "headers": {
         "name": "Spell",
         "level": "Level",
         "source": "Source"
       }
+    },
+    "spell-prep-bar": {
+      "heading": "Spell Preparation",
+      "prep-total": "Total"
     }
   }
 }
