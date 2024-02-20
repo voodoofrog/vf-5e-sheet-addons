@@ -4,7 +4,7 @@
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import SpellBookManager from '../applications/spellbook-manager';
   import { MODULE_ID, SETTINGS, FLAGS } from '../constants';
-  import { getValidClasses, getPrepLimit, getPrepLimitsTotal } from '../index';
+  import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped } from '../index';
 
   export let actor = void 0;
 
@@ -23,7 +23,7 @@
   <h3>Spell Preparation</h3>
   {#if classSourcesEnabled}
     {#each classes as c}
-      <div class="entry">{c.name} {prepLimits?.[c]?.current || totalPrepared}/{getPrepLimit(actor, c)}</div>
+      <div class="entry">{c.name} {getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}</div>
     {/each}
   {:else}
     <div class="entry">Total {totalPrepared}/{getPrepLimitsTotal(actor)}</div>

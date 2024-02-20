@@ -46,6 +46,11 @@ export const getPrepLimitsTotal = (actor) => {
   return result;
 };
 
+export const getCurrentlyPrepped = (actor, className) => {
+  const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
+  return typeof prepLimits?.[className] === 'number' ? prepLimits?.[className] : prepLimits?.[className]?.current;
+};
+
 const filterClickHandler = (event) => {
   const filter = $(event?.currentTarget)?.data('filter');
   const sheet = event?.data;
@@ -252,13 +257,13 @@ Hooks.on('updateItem', async (item, data) => {
     const source = item.getFlag(MODULE_ID, FLAGS.SPELL_SOURCE);
 
     if (getPreparedCasterNames().includes(source)) {
-      const prepLimits = item.parent.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
+      const actor = item.parent;
+      const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
       const wasPrepped = data?.system?.preparation?.prepared;
-      const existingValue =
-        typeof prepLimits?.[source] === 'number' ? prepLimits?.[source] : prepLimits?.[source]?.current;
+      const existingValue = getCurrentlyPrepped(actor, source);
       const current = existingValue || 0;
       prepLimits[source] = wasPrepped ? current + 1 : Math.max(0, current - 1);
-      item.parent.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
+      actor?.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
     }
   }
 });
