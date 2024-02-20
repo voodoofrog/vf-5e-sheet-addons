@@ -21,7 +21,7 @@
     sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
   });
 
-  const classes = getValidClasses(actor);
+  const classes = getValidClasses(actor.get()).map(vc => vc.name);
 </script>
 
 <ApplicationShell bind:elementRoot>
