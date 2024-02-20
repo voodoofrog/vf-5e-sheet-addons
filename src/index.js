@@ -10,8 +10,15 @@ export const gameSettings = new TJSGameSettings(MODULE_ID);
 let originalFilterItems;
 let originalFilterItem;
 
-const { ADDITIONAL_CLASS_NAMES, EDIT_CLASS_NAMES_MENU, SHOW_PREP_NUMBER, SHOW_PREP_COLOURS, USE_CLASS_SOURCES } =
-  SETTINGS;
+const {
+  ADDITIONAL_CLASS_NAMES,
+  EDIT_CLASS_NAMES_MENU,
+  SHOW_PREP_NUMBER,
+  SHOW_PREP_COLOURS,
+  USE_CLASS_SOURCES,
+  PREP_BAR_TOP,
+  PREP_BAR_BOTTOM
+} = SETTINGS;
 
 export const getPreparedCasterNames = () => [
   game.i18n.localize(`${MODULE_ID}.class-names.artificer`),
@@ -49,6 +56,12 @@ export const getPrepLimitsTotal = (actor) => {
 export const getCurrentlyPrepped = (actor, className) => {
   const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
   return typeof prepLimits?.[className] === 'number' ? prepLimits?.[className] : prepLimits?.[className]?.current;
+};
+
+export const prepComparator = (actor, spellcastingClass) => {
+  const current = getCurrentlyPrepped(actor, spellcastingClass.name);
+  const limit = getPrepLimit(actor, spellcastingClass);
+  return current - limit;
 };
 
 const filterClickHandler = (event) => {
@@ -96,18 +109,6 @@ Hooks.once('init', async () => {
     },
     {
       namespace: MODULE_ID,
-      key: SHOW_PREP_NUMBER,
-      options: {
-        name: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.name`,
-        hint: `${MODULE_ID}.settings.${SHOW_PREP_NUMBER}.hint`,
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: true
-      }
-    },
-    {
-      namespace: MODULE_ID,
       key: SHOW_PREP_COLOURS,
       options: {
         name: `${MODULE_ID}.settings.${SHOW_PREP_COLOURS}.name`,
@@ -128,6 +129,30 @@ Hooks.once('init', async () => {
         config: true,
         type: Boolean,
         default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: PREP_BAR_TOP,
+      options: {
+        name: `${MODULE_ID}.settings.${PREP_BAR_TOP}.name`,
+        hint: `${MODULE_ID}.settings.${PREP_BAR_TOP}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: PREP_BAR_BOTTOM,
+      options: {
+        name: `${MODULE_ID}.settings.${PREP_BAR_BOTTOM}.name`,
+        hint: `${MODULE_ID}.settings.${PREP_BAR_BOTTOM}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false
       }
     }
   ]);
@@ -151,13 +176,18 @@ Hooks.on('getActorSheetHeaderButtons', (sheet) => {
 Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   const spellListControls = $(html).find('item-list-controls[for="spellbook"]');
   const actor = data?.actor;
-  const div = document.createElement('div');
-  spellListControls.before(div);
-  addSpellPrepBar(div, actor);
+  const spellsList = $(html).find('section.spells-list');
+
+  if (game.settings.get(MODULE_ID, PREP_BAR_TOP)) {
+    // Add the spell prep bar to to the top
+    const div = document.createElement('div');
+    spellListControls.before(div);
+    addSpellPrepBar(div, actor);
+  }
 
   if (game.settings.get(MODULE_ID, USE_CLASS_SOURCES)) {
     // Add new filter options for valid classes
-    const spellListCards = $(html).find('.spells-list .card');
+    const spellListCards = spellsList.find('.card');
     const actorItems = actor?.items;
     const spellItems = spellListCards.find('.item-list li');
     const filterList = spellListControls.find('search .filter-list');
@@ -200,6 +230,13 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
         $(s).find('.subtitle').append(` (${source})`);
       }
     });
+
+    if (game.settings.get(MODULE_ID, PREP_BAR_BOTTOM)) {
+      // Add the spell prep bar to to the bottom
+      const div = document.createElement('div');
+      spellsList.after(div);
+      addSpellPrepBar(div, actor);
+    }
   }
 
   if (data?.spellcasting) {

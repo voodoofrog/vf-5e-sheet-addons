@@ -2,9 +2,10 @@
 
 <script>
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
+  import { localize } from '#runtime/svelte/helper';
   import SpellBookManager from '../applications/spellbook-manager';
   import { MODULE_ID, SETTINGS, FLAGS } from '../constants';
-  import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped } from '../index';
+  import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped, prepComparator } from '../index';
 
   export let actor = void 0;
 
@@ -20,13 +21,16 @@
 </script>
 
 <div class="spell-prep-controls">
-  <h3>Spell Preparation</h3>
+  <h3>{localize(`${MODULE_ID}.spell-prep-bar.heading`)}</h3>
   {#if classSourcesEnabled}
     {#each classes as c}
-      <div class="entry">{c.name} {getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}</div>
+      <div class="entry {prepComparator(actor, c) > 0 ? 'prep-exceeded' : ''}">
+        <span class="class-name">{c.name}</span>
+        <span class="prep-limits {prepComparator(actor, c) === 0 ? 'prep-reached' : ''}">{getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}</span>
+      </div>
     {/each}
   {:else}
-    <div class="entry">Total {totalPrepared}/{getPrepLimitsTotal(actor)}</div>
+    <div class="entry">{localize(`${MODULE_ID}.spell-prep-bar.total`)} {totalPrepared}/{getPrepLimitsTotal(actor)}</div>
   {/if}
   {#if classSourcesEnabled}
     <button
@@ -68,6 +72,19 @@
       font-size: var(--font-size-11);
       border-left: 1px solid var(--dnd5e-color-gold);
       padding: 0.75rem;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+
+      &.prep-exceeded {
+        color: var(--dnd5e-color-red);
+        text-shadow: 1px 0 0 var(--dnd5e-color-red);
+      }
+
+      .prep-reached {
+        color: var(--dnd5e-color-hp-2);
+        text-shadow: 1px 0 0 var(--dnd5e-color-hp-2);
+      }
 
       &:last-of-type {
         border-right: 1px solid var(--dnd5e-color-gold);
