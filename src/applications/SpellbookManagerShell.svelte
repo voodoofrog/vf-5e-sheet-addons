@@ -4,8 +4,8 @@
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from "#runtime/svelte/helper";
-  import { getPreparedCasterNames } from '../index';
-  import SpellComponent from './SpellComponent.svelte';
+  import { getValidClasses } from '../index';
+  import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
   import { MODULE_ID, SPELL_MANAGER } from '../constants';
 
   export let elementRoot;
@@ -21,7 +21,7 @@
     sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
   });
 
-  const classes = actor.get().items.filter((i) => i.type === 'class' && getPreparedCasterNames().includes(i.name)).map(c => c.name);
+  const classes = getValidClasses(actor);
 </script>
 
 <ApplicationShell bind:elementRoot>
@@ -34,7 +34,7 @@
       </div>
       <ol class="item-list unlist">
         {#each [...$spells] as item (item.id)}
-          <SpellComponent {item} {classes} />
+          <SpellManagementComponent {item} {classes} />
         {/each}
       </ol>
     </div>

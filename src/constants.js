@@ -7,4 +7,8 @@ export const SETTINGS = {
   SHOW_PREP_COLOURS: 'show-prep-limit-colours',
   USE_CLASS_SOURCES: 'use-class-sources'
 };
+export const FLAGS = {
+  SPELL_SOURCE: 'source',
+  PREP_LIMITS: 'prepLimits'
+};
 export const SPELL_MANAGER = 'spell-manager';

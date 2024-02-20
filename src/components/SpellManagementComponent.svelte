@@ -2,7 +2,7 @@
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from "#runtime/svelte/helper";
   import { updateDoc } from '../update-doc.js';
-  import { MODULE_ID } from '../constants';
+  import { MODULE_ID, FLAGS } from '../constants.js';
 
   export let classes;
   export let item;
@@ -33,7 +33,7 @@
     <select
       name="spell-source"
       class="spell-source roboto-upper unselect"
-      use:updateDoc={{ doc: spell, accessor: `flags.${MODULE_ID}.source` }}
+      use:updateDoc={{ doc: spell, accessor: `flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}` }}
     >
       <option value="">None</option>
       {#each classes as c}
