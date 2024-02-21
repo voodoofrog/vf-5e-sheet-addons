@@ -13,7 +13,6 @@ let originalFilterItem;
 const {
   ADDITIONAL_CLASS_NAMES,
   EDIT_CLASS_NAMES_MENU,
-  SHOW_PREP_NUMBER,
   SHOW_PREP_COLOURS,
   USE_CLASS_SOURCES,
   PREP_BAR_TOP,
@@ -178,7 +177,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   const actor = data?.actor;
   const spellsList = $(html).find('section.spells-list');
 
-  if (game.settings.get(MODULE_ID, PREP_BAR_TOP)) {
+  if (game.settings.get(MODULE_ID, PREP_BAR_TOP) && getValidClasses(actor).length > 0) {
     // Add the spell prep bar to to the top
     const div = document.createElement('div');
     spellListControls.before(div);
@@ -231,7 +230,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
       }
     });
 
-    if (game.settings.get(MODULE_ID, PREP_BAR_BOTTOM)) {
+    if (game.settings.get(MODULE_ID, PREP_BAR_BOTTOM) && getValidClasses(actor).length > 0) {
       // Add the spell prep bar to to the bottom
       const div = document.createElement('div');
       spellsList.after(div);
