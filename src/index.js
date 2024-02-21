@@ -238,7 +238,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
     }
   }
 
-  if (data?.spellcasting) {
+  if (getValidClasses(actor).length > 0) {
     const totalLimit = getPrepLimitsTotal(data?.actor);
 
     if (game.settings.get(MODULE_ID, SHOW_PREP_COLOURS)) {
