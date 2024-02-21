@@ -8,7 +8,7 @@
 
 This module adds some functionality to the new default 5e system sheet to show spell preparation information on the spells tab.
 
-For each prepared caster defined in the module (Artificer, Cleric, Druid, Paladin, and Wizard) it will, by default, show a new column in the Spellcasting box at the top of the tab which gives the spell preparation limit for the class.
+For each prepared caster defined in the module (Artificer, Cleric, Druid, Paladin, and Wizard) it will, by default, show a bar at the top of the Spells tab which gives the spell preparation limit for the class.
 
 Even better, it includes a means to set the class source of your spells so that you can actually see when you are hitting the limits or exceeding the preparation limits for each of your prepared caster classes. Or if you prefer you can set it to do a very simple calculation of the total of all the spell preparation limits for each valid class on the character. Either way, the limits are then used to determine the colour of the spell preparation icons by each _preparable_ spell — green if the total limit is hit, and red if it is exceeded.
 
