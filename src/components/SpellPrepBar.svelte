@@ -12,6 +12,7 @@
   const classes = getValidClasses(actor);
   const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
   const classSourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
+  const totalLimit = getPrepLimitsTotal(actor);
   const totalPrepared = actor?.items
     ?.filter((i) => i.type === 'spell')
     .filter((spell) => {
@@ -26,11 +27,16 @@
     {#each classes as c}
       <div class="entry {prepComparator(actor, c) > 0 ? 'prep-exceeded' : ''}">
         <span class="class-name">{c.name}</span>
-        <span class="prep-limits {prepComparator(actor, c) === 0 ? 'prep-reached' : ''}">{getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}</span>
+        <span class="prep-limits {prepComparator(actor, c) === 0 ? 'prep-reached' : ''}">
+          {getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}
+        </span>
       </div>
     {/each}
   {:else}
-    <div class="entry">{localize(`${MODULE_ID}.spell-prep-bar.total`)} {totalPrepared}/{getPrepLimitsTotal(actor)}</div>
+    <div class="entry {totalPrepared > totalLimit ? 'prep-exceeded' : ''}">
+      <span class="prep-total">{localize(`${MODULE_ID}.spell-prep-bar.prep-total`)}</span>
+      <span class="prep-limits {totalPrepared === totalLimit ? 'prep-reached' : ''}">{totalPrepared}/{totalLimit}</span>
+    </div>
   {/if}
   {#if classSourcesEnabled}
     <button

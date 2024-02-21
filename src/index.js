@@ -249,13 +249,11 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
         // Add classes for prep limits display for sourced spells
         const classes = getValidClasses(actor);
         for (const cn of classes.map((vc) => vc.name)) {
-          const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS);
-          const currentPrepped = typeof prepLimits?.[cn] === 'number' ? prepLimits?.[cn] : prepLimits?.[cn]?.current;
           const classItem = classes.find((c) => c.name === cn);
-          const classMaxPrepped = getPrepLimit(data?.actor, classItem);
-          if (currentPrepped >= classMaxPrepped) {
+          const prepComparison = prepComparator(actor, classItem);
+          if (prepComparison >= 0) {
             const itemEntry = spellItems.find(`.item[data-spell-source="${cn}"]`);
-            if (currentPrepped > classMaxPrepped) {
+            if (prepComparison > 0) {
               itemEntry.find(PREP_SELECTOR).addClass('prep-exceeded');
               itemEntry.addClass('prep-exceeded');
             } else {
