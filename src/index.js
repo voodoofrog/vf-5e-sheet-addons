@@ -103,7 +103,7 @@ Hooks.once('init', async () => {
         scope: 'world',
         config: false,
         type: Array,
-        default: ['foo', 'bar']
+        default: []
       }
     },
     {
