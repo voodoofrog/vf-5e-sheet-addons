@@ -23,10 +23,11 @@ export const getPrepLimit = (actor, spellcastingClass) => {
   const {
     system: {
       levels,
-      spellcasting: { ability }
+      spellcasting: { ability, progression }
     }
   } = spellcastingClass;
-  return levels + actor?.system?.abilities?.[ability]?.mod;
+  const level = progression === 'half' ? Math.floor(levels / 2) : levels;
+  return Math.max(level + actor?.system?.abilities?.[ability]?.mod, 1);
 };
 
 export const getPrepLimitsTotal = (actor) => {
