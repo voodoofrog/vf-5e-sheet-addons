@@ -4,7 +4,7 @@
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from '#runtime/svelte/helper';
   import SpellBookManager from '../applications/spellbook-manager';
-  import { MODULE_ID, SETTINGS, FLAGS } from '../constants';
+  import { MODULE_ID, SETTINGS } from '../constants';
   import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped, prepComparator } from '../spell-preparation';
 
   export let actor = void 0;
