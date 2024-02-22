@@ -26,7 +26,8 @@ Hooks.once('init', async () => {
     name: `${MODULE_ID}.settings.${EDIT_CLASS_NAMES_MENU}.name`,
     label: `${MODULE_ID}.settings.${EDIT_CLASS_NAMES_MENU}.label`,
     icon: 'fas fa-bars',
-    type: EditClassesButton
+    type: EditClassesButton,
+    restricted: true
   });
   await gameSettings.registerAll([
     {
