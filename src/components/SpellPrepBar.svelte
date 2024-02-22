@@ -5,7 +5,7 @@
   import { localize } from '#runtime/svelte/helper';
   import SpellBookManager from '../applications/spellbook-manager';
   import { MODULE_ID, SETTINGS, FLAGS } from '../constants';
-  import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped, prepComparator } from '../index';
+  import { getValidClasses, getPrepLimit, getPrepLimitsTotal, getCurrentlyPrepped, prepComparator } from '../spell-preparation';
 
   export let actor = void 0;
 
@@ -28,7 +28,7 @@
       <div class="entry {prepComparator(actor, c) > 0 ? 'prep-exceeded' : ''}">
         <span class="class-name">{c.name}</span>
         <span class="prep-limits {prepComparator(actor, c) === 0 ? 'prep-reached' : ''}">
-          {getCurrentlyPrepped(actor, c.name)}/{getPrepLimit(actor, c)}
+          {getCurrentlyPrepped(actor, c.name) || 0}/{getPrepLimit(actor, c)}
         </span>
       </div>
     {/each}

@@ -4,7 +4,7 @@
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from "#runtime/svelte/helper";
-  import { getValidClasses } from '../index';
+  import { getValidClasses } from '../spell-preparation';
   import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
   import { MODULE_ID, SPELL_MANAGER } from '../constants';
 
