@@ -10,7 +10,6 @@
   export let actor = void 0;
 
   const classes = getValidClasses(actor);
-  const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
   const classSourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
   const totalLimit = getPrepLimitsTotal(actor);
   const totalPrepared = actor?.items
