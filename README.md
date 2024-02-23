@@ -14,7 +14,7 @@ Even better, it includes a means to set the class source of your spells so that 
 
 There are settings in the module too, so that these features can be turned on or off, and if you have any custom preparation style casting classes there is a menu in the settings to add their class names. Note that when entering these names you should use the name as it appears on the Spells tab of the sheet, title case and all. This was the only way I could find to tie the sheet data to the actor data, but hey, it works!
 
-Right now, this is just in beta, and I won't be submitting to the Foundry list until I'm sure it's fine and I have written proper documentation.
+Right now, this is just in beta, but it's pretty stable and seems to work well.
 
 ## Install
 Manifest: `https://github.com/voodoofrog/vf-5e-sheet-addons/releases/latest/download/module.json`
