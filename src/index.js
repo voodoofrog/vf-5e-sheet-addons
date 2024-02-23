@@ -90,7 +90,7 @@ Hooks.once('init', async () => {
       }
     }
   ]);
-  CONFIG.debug.hooks = false;
+  CONFIG.debug.hooks = true;
 });
 
 Hooks.once('ready', () => {
@@ -109,6 +109,34 @@ Hooks.on('getActorSheetHeaderButtons', (sheet) => {
 
 Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   renderSpellPrepChanges(sheet, html, data);
+
+  // Handle unidentified items
+  const actor = data?.actor;
+  const actorItems = actor?.items;
+  const inventoryItems = $(html).find('section.inventory-list .item-list li.item');
+
+  // Remove price from display
+  // TODO: remove this when fixed in system
+  inventoryItems.each((idx, i) => {
+    const item = actorItems?.get(i.dataset?.itemId);
+    const { identified } = item.system;
+    if (!identified) {
+      $(i).children('.item-price').empty().addClass('empty');
+    }
+  });
+
+  // Remove attuning icon
+  // TODO: Make this setting controlled
+  const attunable = inventoryItems.filter(() => {
+    return $(this).has('[data-action="attune"]');
+  });
+  attunable.each((idx, i) => {
+    const item = actorItems?.get(i.dataset?.itemId);
+    const { identified } = item.system;
+    if (!identified) {
+      $(i).children('.item-controls').children('[data-action="attune"]').remove();
+    }
+  });
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -131,4 +159,13 @@ Hooks.on('renderItemSheet', (sheet, [html]) => {
   html
     .querySelectorAll('.dnd5e.sheet.item .sheet-header .item-subtitle label:has(input:not([disabled]))')
     .forEach((n) => n.remove());
+});
+
+// Remove Identify button from Item Context menu on Actor Sheet
+Hooks.on('dnd5e.getItemContextOptions', (item, buttons) => {
+  // TODO: Make this setting controlled
+  if (game.user.isGM) return;
+  const unidentified = item.system.identified === false;
+  if (!unidentified) return;
+  buttons.findSplice((e) => e.name === 'DND5E.Identify');
 });
