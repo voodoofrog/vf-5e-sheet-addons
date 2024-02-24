@@ -6,15 +6,24 @@
 
 ## Basic Information
 
-This module adds some functionality to the new default 5e system sheet to show spell preparation information on the spells tab.
+This module adds some functionality to the new default 5e system character sheet:
+* Show spell preparation information on the spells tab.
+* Handle setting up class sources for preparable spells.
+* Tighter controls around item identification.
 
+Right now, this is just in beta, but it's pretty stable and seems to work well.
+
+### Prepared Casters
 For each prepared caster defined in the module (Artificer, Cleric, Druid, Paladin, and Wizard) it will, by default, show a bar at the top of the Spells tab which gives the spell preparation limit for the class.
 
 Even better, it includes a means to set the class source of your spells so that you can actually see when you are hitting the limits or exceeding the preparation limits for each of your prepared caster classes. Or if you prefer you can set it to do a very simple calculation of the total of all the spell preparation limits for each valid class on the character. Either way, the limits are then used to determine the colour of the spell preparation icons by each _preparable_ spell — green if the total limit is hit, and red if it is exceeded.
 
-There are settings in the module too, so that these features can be turned on or off, and if you have any custom preparation style casting classes there is a menu in the settings to add their class names. Note that when entering these names you should use the name as it appears on the Spells tab of the sheet, title case and all. This was the only way I could find to tie the sheet data to the actor data, but hey, it works!
+There are settings in the module too, so that these features can be turned on or off, and if you have any custom preparation style casting classes there is a menu in the settings to add their class names. Note that when entering these names you should use the name as it appears on the Spells tab of the sheet, title case and all. I may change this in the future to use the actual class identifier, but it works as is for now.
 
-Right now, this is just in beta, but it's pretty stable and seems to work well.
+### Item Identification
+You can set a minimum user role to show the identification options to — this includes the context menu on the characater sheet as well as the toggle at the top of the item sheet.
+
+Furthermore, you can enable/disable the showing of attunement options for unidentified items.
 
 ## Install
 Manifest: `https://github.com/voodoofrog/vf-5e-sheet-addons/releases/latest/download/module.json`
