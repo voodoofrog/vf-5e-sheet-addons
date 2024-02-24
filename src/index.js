@@ -148,7 +148,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   const inventoryItems = $(html).find('section.inventory-list .item-list li.item');
 
   // Remove price from display
-  // TODO: remove this when fixed in system
+  // TODO: remove this when dnd5e 3.0.4 is released
   inventoryItems.each((idx, i) => {
     const item = actorItems?.get(i.dataset?.itemId);
     const { identified } = item.system;
@@ -157,7 +157,7 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
     }
   });
 
-  // Remove attuning icon
+  // Handle character sheet attunement control
   if (
     game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION) &&
     game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)
@@ -189,19 +189,26 @@ Hooks.on('updateItem', async (item, data) => {
 });
 
 Hooks.on('renderItemSheet', (sheet, [html]) => {
-  if (game.user.isGM) return;
-  const unidentified = sheet.item.system.identified === false;
-  if (!unidentified) return;
-  html
-    .querySelectorAll('.dnd5e.sheet.item .sheet-header .item-subtitle label:has(input:not([disabled]))')
-    .forEach((n) => n.remove());
+  // Handle Identify toggle on Item Sheet
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (sheet.item?.system?.identified === false) {
+      html
+        .querySelectorAll('.dnd5e.sheet.item .sheet-header .item-subtitle label.identified:has(input:not([disabled]))')
+        .forEach((n) => n.remove());
+    }
+  }
 });
 
-// Remove Identify option from Item Context menu on Actor Sheet
 Hooks.on('dnd5e.getItemContextOptions', (item, buttons) => {
+  // Handle Identify option in Item Context menu on Actor Sheet
   if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
-    if (item?.system?.identified === false) {
+    if (item.system?.identified === false) {
       buttons.findSplice((e) => e.name === 'DND5E.Identify');
+
+      // Handle Attune option in Item Context menu on Actor Sheet
+      if (game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)) {
+        buttons.findSplice((e) => e.name === 'DND5E.ContextMenuActionAttune');
+      }
     }
   }
 });
