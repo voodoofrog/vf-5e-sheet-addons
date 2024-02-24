@@ -187,3 +187,28 @@ Hooks.on('updateItem', async (item, data) => {
     updateSpellForCharacter(item, data);
   }
 });
+
+Hooks.on('renderItemSheet', (sheet, [html]) => {
+  // Handle Identify toggle on Item Sheet
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (sheet.item?.system?.identified === false) {
+      html
+        .querySelectorAll('.dnd5e.sheet.item .sheet-header .item-subtitle label.identified:has(input:not([disabled]))')
+        .forEach((n) => n.remove());
+    }
+  }
+});
+
+Hooks.on('dnd5e.getItemContextOptions', (item, buttons) => {
+  // Handle Identify option in Item Context menu on Actor Sheet
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (item.system?.identified === false) {
+      buttons.findSplice((e) => e.name === 'DND5E.Identify');
+
+      // Handle Attune option in Item Context menu on Actor Sheet
+      if (game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)) {
+        buttons.findSplice((e) => e.name === 'DND5E.ContextMenuActionAttune');
+      }
+    }
+  }
+});
