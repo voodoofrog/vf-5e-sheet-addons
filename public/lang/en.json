@@ -12,10 +12,10 @@
     },
     "settings": {
       "additional-class-names": {
-        "name": "Additional prepared caster class names"
+        "name": "Additional Prepared Caster Class Names"
       },
       "edit-class-names-menu": {
-        "name": "Edit prepared caster class names",
+        "name": "Edit Prepared Caster Class Names",
         "label": "Edit",
         "title": "Edit Prepared Caster Class Names",
         "note": "Add any extra class names you want to use for the sheet spellbook preparation functionality. Note: these should be the proper title case names such as 'Wizard', not 'wizard'.",
@@ -33,19 +33,19 @@
         }
       },
       "show-prep-limit-colours": {
-        "name": "Change colours for preparable spells",
+        "name": "Change Colors For Preparable Spells",
         "hint": "If ticked, changes the backgrounds and preparation icons color for preparable spells in the spells tab when you reach or exceed your limit. You will need to reopen sheets to see the change."
       },
       "use-class-sources": {
-        "name": "Use class sources",
+        "name": "Use Class Sources",
         "hint": "If ticked, allows you to manage spell sources for preparation spellcasters. You will need to reopen sheets to see the change."
       },
       "prep-bar-top": {
-        "name": "Spell preparation bar at top",
+        "name": "Spell Preparation Bar At Top",
         "hint": "If ticked, shows a spell preparation bar at the top of the spells tab. You will need to reopen sheets to see the change."
       },
       "prep-bar-bottom": {
-        "name": "Spell preparation bar at bottom",
+        "name": "Spell Preparation Bar At Bottom",
         "hint": "If ticked, shows a spell preparation bar at the bottom of the spells tab. You will need to reopen sheets to see the change."
       },
       "identify-permission": {
