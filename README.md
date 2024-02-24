@@ -6,7 +6,7 @@
 
 ## Basic Information
 
-This module adds some functionality to the new default 5e system character sheet:
+This module adds some functionality to the new default 5e system character sheet for Foundry VTT:
 * Show spell preparation information on the spells tab.
 * Handle setting up class sources for preparable spells.
 * Tighter controls around item identification.
@@ -23,7 +23,9 @@ There are settings in the module too, so that these features can be turned on or
 ### Item Identification
 You can set a minimum user role to show the identification options to — this includes the context menu on the characater sheet as well as the toggle at the top of the item sheet.
 
-Furthermore, you can enable/disable the showing of attunement options for unidentified items.
+Furthermore, you can enable/disable the showing of attunement options to user below the role for unidentified items.
+
+**Note**: _If you set the permissions to Game Master role then Assistant GMs will still be able to see/access some things by default. You'd have to actually modify the core permissions to truly lock it down, but I left the option in there for those that might want it._
 
 ## Install
 Manifest: `https://github.com/voodoofrog/vf-5e-sheet-addons/releases/latest/download/module.json`
