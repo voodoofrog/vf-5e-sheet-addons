@@ -14,7 +14,9 @@ const {
   SHOW_PREP_COLOURS,
   USE_CLASS_SOURCES,
   PREP_BAR_TOP,
-  PREP_BAR_BOTTOM
+  PREP_BAR_BOTTOM,
+  IDENTIFY_PERMISSION,
+  REMOVE_ATTUNEMENT
 } = SETTINGS;
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -88,6 +90,36 @@ Hooks.once('init', async () => {
         type: Boolean,
         default: false
       }
+    },
+    {
+      namespace: MODULE_ID,
+      key: IDENTIFY_PERMISSION,
+      options: {
+        name: `${MODULE_ID}.settings.${IDENTIFY_PERMISSION}.name`,
+        hint: `${MODULE_ID}.settings.${IDENTIFY_PERMISSION}.hint`,
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 3,
+        choices: {
+          [CONST.USER_ROLES.PLAYER]: 'USER.RolePlayer',
+          [CONST.USER_ROLES.TRUSTED]: 'USER.RoleTrusted',
+          [CONST.USER_ROLES.ASSISTANT]: 'USER.RoleAssistant',
+          [CONST.USER_ROLES.GAMEMASTER]: 'USER.RoleGamemaster'
+        }
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: REMOVE_ATTUNEMENT,
+      options: {
+        name: `${MODULE_ID}.settings.${REMOVE_ATTUNEMENT}.name`,
+        hint: `${MODULE_ID}.settings.${REMOVE_ATTUNEMENT}.hint`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true
+      }
     }
   ]);
   CONFIG.debug.hooks = true;
@@ -126,17 +158,21 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   });
 
   // Remove attuning icon
-  // TODO: Make this setting controlled
-  const attunable = inventoryItems.filter(() => {
-    return $(this).has('[data-action="attune"]');
-  });
-  attunable.each((idx, i) => {
-    const item = actorItems?.get(i.dataset?.itemId);
-    const { identified } = item.system;
-    if (!identified) {
-      $(i).children('.item-controls').children('[data-action="attune"]').remove();
-    }
-  });
+  if (
+    game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION) &&
+    game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)
+  ) {
+    const attunable = inventoryItems.filter(() => {
+      return $(this).has('[data-action="attune"]');
+    });
+    attunable.each((idx, i) => {
+      const item = actorItems?.get(i.dataset?.itemId);
+      const { identified } = item.system;
+      if (!identified) {
+        $(i).children('.item-controls').children('[data-action="attune"]').remove();
+      }
+    });
+  }
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -161,11 +197,11 @@ Hooks.on('renderItemSheet', (sheet, [html]) => {
     .forEach((n) => n.remove());
 });
 
-// Remove Identify button from Item Context menu on Actor Sheet
+// Remove Identify option from Item Context menu on Actor Sheet
 Hooks.on('dnd5e.getItemContextOptions', (item, buttons) => {
-  // TODO: Make this setting controlled
-  if (game.user.isGM) return;
-  const unidentified = item.system.identified === false;
-  if (!unidentified) return;
-  buttons.findSplice((e) => e.name === 'DND5E.Identify');
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (item?.system?.identified === false) {
+      buttons.findSplice((e) => e.name === 'DND5E.Identify');
+    }
+  }
 });
