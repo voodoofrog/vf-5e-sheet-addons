@@ -12,6 +12,8 @@ const publicDirectory = './public';
 
 /**
  * Get the data path for Foundry VTT based on what is configured in `foundry-data-path-config.json`
+ *
+ * @returns {string} path
  */
 function getFoundryDataPath() {
   const config = readJSONSync('foundry-data-path-config.json');
