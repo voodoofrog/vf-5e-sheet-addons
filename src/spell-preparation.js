@@ -200,15 +200,18 @@ export const createSpell = (spellItem) => {
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources
 export const updateSpellForCharacter = (item, data) => {
-  const source = item.getFlag(MODULE_ID, FLAGS.SPELL_SOURCE);
+  // Spell prep handling
+  if (data?.system?.preparation) {
+    const source = item.getFlag(MODULE_ID, FLAGS.SPELL_SOURCE);
 
-  if (getPreparedCasterNames().includes(source)) {
-    const actor = item.parent;
-    const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
-    const wasPrepped = data?.system?.preparation?.prepared;
-    const existingValue = getCurrentlyPrepped(actor, source);
-    const current = existingValue || 0;
-    prepLimits[source] = wasPrepped ? current + 1 : Math.max(0, current - 1);
-    actor?.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
+    if (getPreparedCasterNames().includes(source)) {
+      const actor = item.parent;
+      const prepLimits = actor?.getFlag(MODULE_ID, FLAGS.PREP_LIMITS) || {};
+      const wasPrepped = data?.system?.preparation?.prepared;
+      const existingValue = getCurrentlyPrepped(actor, source);
+      const current = existingValue || 0;
+      prepLimits[source] = wasPrepped ? current + 1 : Math.max(0, current - 1);
+      actor?.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
+    }
   }
 };
