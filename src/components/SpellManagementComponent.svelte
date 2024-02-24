@@ -1,6 +1,6 @@
 <script>
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
-  import { localize } from "#runtime/svelte/helper";
+  import { localize } from '#runtime/svelte/helper';
   import { updateDoc } from '../update-doc.js';
   import { MODULE_ID, FLAGS } from '../constants.js';
 
@@ -17,12 +17,12 @@
     </div>
     <div class="tags">
       {#if $spell.system.properties.has('ritual')}
-        <span aria-label="{localize('DND5E.Item.Property.Ritual')}">
+        <span aria-label={localize('DND5E.Item.Property.Ritual')}>
           <dnd5e-icon src="systems/dnd5e/icons/svg/items/spell.svg"></dnd5e-icon>
         </span>
       {/if}
       {#if $spell.system.properties.has('concentration')}
-        <span aria-label="{localize('DND5E.Item.Property.Concentration')}">
+        <span aria-label={localize('DND5E.Item.Property.Concentration')}>
           <dnd5e-icon src="systems/dnd5e/icons/svg/statuses/concentrating.svg"></dnd5e-icon>
         </span>
       {/if}
