@@ -14,7 +14,9 @@ const {
   SHOW_PREP_COLOURS,
   USE_CLASS_SOURCES,
   PREP_BAR_TOP,
-  PREP_BAR_BOTTOM
+  PREP_BAR_BOTTOM,
+  IDENTIFY_PERMISSION,
+  REMOVE_ATTUNEMENT
 } = SETTINGS;
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -88,6 +90,36 @@ Hooks.once('init', async () => {
         type: Boolean,
         default: false
       }
+    },
+    {
+      namespace: MODULE_ID,
+      key: IDENTIFY_PERMISSION,
+      options: {
+        name: `${MODULE_ID}.settings.${IDENTIFY_PERMISSION}.name`,
+        hint: `${MODULE_ID}.settings.${IDENTIFY_PERMISSION}.hint`,
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 3,
+        choices: {
+          [CONST.USER_ROLES.PLAYER]: 'USER.RolePlayer',
+          [CONST.USER_ROLES.TRUSTED]: 'USER.RoleTrusted',
+          [CONST.USER_ROLES.ASSISTANT]: 'USER.RoleAssistant',
+          [CONST.USER_ROLES.GAMEMASTER]: 'USER.RoleGamemaster'
+        }
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: REMOVE_ATTUNEMENT,
+      options: {
+        name: `${MODULE_ID}.settings.${REMOVE_ATTUNEMENT}.name`,
+        hint: `${MODULE_ID}.settings.${REMOVE_ATTUNEMENT}.hint`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true
+      }
     }
   ]);
   CONFIG.debug.hooks = false;
@@ -109,6 +141,38 @@ Hooks.on('getActorSheetHeaderButtons', (sheet) => {
 
 Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   renderSpellPrepChanges(sheet, html, data);
+
+  // Handle unidentified items
+  const actor = data?.actor;
+  const actorItems = actor?.items;
+  const inventoryItems = $(html).find('section.inventory-list .item-list li.item');
+
+  // Remove price from display
+  // TODO: remove this when dnd5e 3.0.4 is released
+  inventoryItems.each((idx, i) => {
+    const item = actorItems?.get(i.dataset?.itemId);
+    const { identified } = item.system;
+    if (!identified) {
+      $(i).children('.item-price').empty().addClass('empty');
+    }
+  });
+
+  // Handle character sheet attunement control
+  if (
+    game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION) &&
+    game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)
+  ) {
+    const attunable = inventoryItems.filter(() => {
+      return $(this).has('[data-action="attune"]');
+    });
+    attunable.each((idx, i) => {
+      const item = actorItems?.get(i.dataset?.itemId);
+      const { identified } = item.system;
+      if (!identified) {
+        $(i).children('.item-controls').children('[data-action="attune"]').remove();
+      }
+    });
+  }
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -121,5 +185,30 @@ Hooks.on('createItem', async (item, config, userId) => {
 Hooks.on('updateItem', async (item, data) => {
   if (item.type === 'spell' && item.parent?.type === 'character') {
     updateSpellForCharacter(item, data);
+  }
+});
+
+Hooks.on('renderItemSheet', (sheet, [html]) => {
+  // Handle Identify toggle on Item Sheet
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (sheet.item?.system?.identified === false) {
+      html
+        .querySelectorAll('.dnd5e.sheet.item .sheet-header .item-subtitle label.identified:has(input:not([disabled]))')
+        .forEach((n) => n.remove());
+    }
+  }
+});
+
+Hooks.on('dnd5e.getItemContextOptions', (item, buttons) => {
+  // Handle Identify option in Item Context menu on Actor Sheet
+  if (game.user.role < game.settings.get(MODULE_ID, IDENTIFY_PERMISSION)) {
+    if (item.system?.identified === false) {
+      buttons.findSplice((e) => e.name === 'DND5E.Identify');
+
+      // Handle Attune option in Item Context menu on Actor Sheet
+      if (game.settings.get(MODULE_ID, REMOVE_ATTUNEMENT)) {
+        buttons.findSplice((e) => e.name === 'DND5E.ContextMenuActionAttune');
+      }
+    }
   }
 });
