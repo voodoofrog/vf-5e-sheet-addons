@@ -3,7 +3,7 @@
 <script>
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
-  import { localize } from "#runtime/svelte/helper";
+  import { localize } from '#runtime/svelte/helper';
   import { getValidClasses } from '../spell-preparation';
   import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
   import { MODULE_ID, SPELL_MANAGER } from '../constants';
@@ -21,7 +21,7 @@
     sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
   });
 
-  const classes = getValidClasses(actor.get()).map(vc => vc.name);
+  const classes = getValidClasses(actor.get()).map((vc) => vc.name);
 </script>
 
 <ApplicationShell bind:elementRoot>
