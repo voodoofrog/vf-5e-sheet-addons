@@ -1,11 +1,23 @@
 import { writable } from 'svelte/store';
-import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS } from './constants';
+import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
+import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS, SPELL_MANAGER } from './constants';
 import SpellPrepBar from './components/SpellPrepBar.svelte';
+import SpellBookManager from './applications/spellbook-manager';
 import { originalFilterItems, originalFilterItem } from './index';
 
 const { ADDITIONAL_CLASS_NAMES, SHOW_PREP_COLOURS, USE_CLASS_SOURCES, PREP_BAR_TOP, PREP_BAR_BOTTOM } = SETTINGS;
 
-export const spellStore = writable([]);
+const createSpellStore = () => {
+  const { subscribe, set, update } = writable([]);
+
+  return {
+    subscribe,
+    add: (spell) => update((spells) => [...spells, spell]),
+    reset: () => set([])
+  };
+};
+
+export const spellStore = createSpellStore();
 
 export const getPreparedCasterNames = () => [
   game.i18n.localize(`${MODULE_ID}.class-names.artificer`),
@@ -178,10 +190,12 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-export const createSpell = (item) => {
-  // const actor = new TJSDocument(item.parent);
-  // new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
+export const createSpell = (spellItem) => {
+  spellStore.add(spellItem);
+  const actor = new TJSDocument(spellItem.parent);
+  new SpellBookManager({
+    svelte: { props: { actor, minLevel: 1, mode: SPELL_MANAGER.MODES.ADD } }
+  }).render(true, { focus: true });
 };
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources

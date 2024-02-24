@@ -14,4 +14,10 @@ export const FLAGS = {
   SPELL_SOURCE: 'source',
   PREP_LIMITS: 'prepLimits'
 };
-export const SPELL_MANAGER = 'spell-manager';
+export const SPELL_MANAGER = {
+  ID: 'spell-manager',
+  MODES: {
+    MANAGE: 'manage-spells',
+    ADD: 'add-new-spells'
+  }
+};
