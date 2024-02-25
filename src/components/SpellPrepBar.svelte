@@ -50,7 +50,10 @@
       aria-label="Manage Spell Sources"
       on:click={() => {
         const actorDoc = new TJSDocument(actor);
-        new SpellBookManager({ svelte: { props: { actor: actorDoc, minLevel: 1 } } }).render(true, { focus: true });
+        new SpellBookManager({
+          id: SpellBookManager.createId(actor.id),
+          svelte: { props: { actor: actorDoc } }
+        }).render(true, { focus: true });
       }}
     >
       <i class="fas fa-feather"></i>

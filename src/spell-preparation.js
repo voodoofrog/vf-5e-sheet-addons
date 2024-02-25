@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
-import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS, SPELL_MANAGER } from './constants';
+import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS } from './constants';
 import SpellPrepBar from './components/SpellPrepBar.svelte';
-import SpellBookManager from './applications/spellbook-manager';
+import SpellBookAdd from './applications/spellbook-add';
 import { originalFilterItems, originalFilterItem } from './index';
 
 const { ADDITIONAL_CLASS_NAMES, SHOW_PREP_COLOURS, USE_CLASS_SOURCES, PREP_BAR_TOP, PREP_BAR_BOTTOM } = SETTINGS;
@@ -193,8 +193,9 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
 export const createSpell = (spellItem) => {
   spellStore.add(spellItem);
   const actor = new TJSDocument(spellItem.parent);
-  new SpellBookManager({
-    svelte: { props: { actor, minLevel: 1, mode: SPELL_MANAGER.MODES.ADD } }
+  new SpellBookAdd({
+    id: SpellBookAdd.createId(actor.id),
+    svelte: { props: { actor } }
   }).render(true, { focus: true });
 };
 

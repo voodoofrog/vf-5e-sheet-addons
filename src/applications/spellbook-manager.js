@@ -1,7 +1,6 @@
 import { SvelteApplication } from '#runtime/svelte/application';
 import SpellbookManagerShell from './SpellbookManagerShell.svelte';
 import { MODULE_ID, SPELL_MANAGER } from '../constants';
-import { spellStore } from '../spell-preparation';
 
 export default class SpellBookManager extends SvelteApplication {
   static get defaultOptions() {
@@ -15,15 +14,18 @@ export default class SpellBookManager extends SvelteApplication {
 
       svelte: {
         class: SpellbookManagerShell,
-        target: document.body
+        target: document.body,
+        props: {
+          minLevel: 1,
+          mode: SPELL_MANAGER.MODES.MANAGE
+        }
       }
     });
 
     return options;
   }
 
-  async close(options) {
-    spellStore.reset();
-    return super.close(options);
+  static createId(actorId) {
+    return `${MODULE_ID}-${SPELL_MANAGER.ID}-${actorId}`;
   }
 }
