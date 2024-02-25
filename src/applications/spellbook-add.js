@@ -1,5 +1,5 @@
 import { MODULE_ID, SPELL_MANAGER } from '../constants';
-import { spellStore } from '../spell-preparation';
+import { spellStores } from '../spell-preparation';
 import SpellBookManager from './spellbook-manager';
 
 export default class SpellBookAdd extends SpellBookManager {
@@ -24,7 +24,12 @@ export default class SpellBookAdd extends SpellBookManager {
   }
 
   async close(options) {
-    spellStore.reset();
+    const actorId = this.options.svelte?.props?.actor?.id;
+
+    if (actorId) {
+      spellStores[actorId].reset();
+    }
+
     return super.close(options);
   }
 }

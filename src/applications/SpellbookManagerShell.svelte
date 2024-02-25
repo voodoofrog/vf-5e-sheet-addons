@@ -7,26 +7,27 @@
   import { getValidClasses } from '../spell-preparation';
   import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
   import { MODULE_ID, SPELL_MANAGER } from '../constants';
-  import { spellStore } from '../spell-preparation';
+  import { spellStores } from '../spell-preparation';
 
   export let elementRoot;
-  export let actor = new TJSDocument();
+  export let actor;
   export let minLevel = 1;
   export let mode = SPELL_MANAGER.MODES.MANAGE;
 
   const spellFilter = (data) => data.type === 'spell';
   const levelFilter = (data) => data.system.level >= minLevel;
   const isAddMode = mode === SPELL_MANAGER.MODES.ADD;
+  const actorDoc = new TJSDocument(actor);
 
   const spells = isAddMode
-    ? spellStore
-    : actor.embedded.create(Item, {
+    ? spellStores[actor.id]
+    : actorDoc.embedded.create(Item, {
         name: 'spell',
         filters: [spellFilter, levelFilter],
         sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
       });
 
-  const classes = getValidClasses(actor.get()).map((vc) => vc.name);
+  const classes = getValidClasses(actor).map((vc) => vc.name);
 </script>
 
 <ApplicationShell bind:elementRoot>

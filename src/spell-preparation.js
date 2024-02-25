@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
 import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS } from './constants';
 import SpellPrepBar from './components/SpellPrepBar.svelte';
 import SpellBookAdd from './applications/spellbook-add';
@@ -17,7 +16,7 @@ const createSpellStore = () => {
   };
 };
 
-export const spellStore = createSpellStore();
+export const spellStores = {};
 
 export const getPreparedCasterNames = () => [
   game.i18n.localize(`${MODULE_ID}.class-names.artificer`),
@@ -191,8 +190,14 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
 };
 
 export const createSpell = (spellItem) => {
-  spellStore.add(spellItem);
-  const actor = new TJSDocument(spellItem.parent);
+  const actor = spellItem.parent;
+
+  if (!spellStores[actor.id]) {
+    spellStores[actor.id] = createSpellStore();
+  }
+
+  spellStores[actor.id].add(spellItem);
+
   new SpellBookAdd({
     id: SpellBookAdd.createId(actor.id),
     svelte: { props: { actor } }
