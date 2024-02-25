@@ -62,8 +62,10 @@
       "headers": {
         "name": "Spell",
         "level": "Level",
+        "prep": "Preparation",
         "source": "Source"
-      }
+      },
+      "default-option": "Other"
     },
     "spell-prep-bar": {
       "heading": "Spell Preparation",

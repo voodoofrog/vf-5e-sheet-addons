@@ -14,20 +14,24 @@
   export let minLevel = 1;
   export let mode = SPELL_MANAGER.MODES.MANAGE;
 
-  const spellFilter = (data) => data.type === 'spell';
-  const levelFilter = (data) => data.system.level >= minLevel;
+  const spellStore = spellStores[actor.id];
+  const spellFilter = (item) => item.type === 'spell';
+  const levelFilter = (item) => item.system.level >= minLevel;
+  const spellIdFilter = (item) => $spellStore.includes(item.id);
   const isAddMode = mode === SPELL_MANAGER.MODES.ADD;
   const actorDoc = new TJSDocument(actor);
-
-  const spells = isAddMode
-    ? spellStores[actor.id]
-    : actorDoc.embedded.create(Item, {
-        name: 'spell',
-        filters: [spellFilter, levelFilter],
-        sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
-      });
-
+  const filters = [spellFilter, levelFilter];
   const classes = getValidClasses(actor).map((vc) => vc.name);
+
+  if (isAddMode) {
+    filters.push(spellIdFilter);
+  }
+
+  const spells = actorDoc.embedded.create(Item, {
+    name: 'spell',
+    filters,
+    sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
+  });
 </script>
 
 <ApplicationShell bind:elementRoot>
@@ -37,13 +41,13 @@
         <h3 class="item-name spell-header">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.name`)}</h3>
         <div class="item-header spell-level">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.level`)}</div>
         {#if isAddMode}
-          <div class="item-header spell-prep">Prep</div>
+          <div class="item-header spell-prep">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.prep`)}</div>
         {/if}
-        <div class="item-header item-source">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.source`)}</div>
+        <div class="item-header spell-source">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.source`)}</div>
       </div>
       <ol class="item-list unlist">
-        {#each [...$spells] as item (item.id)}
-          <SpellManagementComponent {item} {classes} {mode} />
+        {#each [...$spells] as spell (spell.id)}
+          <SpellManagementComponent {spell} {classes} {mode} />
         {/each}
       </ol>
     </div>
@@ -92,7 +96,11 @@
           width: 50px;
         }
 
-        .items-header .item-source {
+        .items-header .spell-prep {
+          width: 155px;
+        }
+
+        .items-header .spell-source {
           width: 180px;
         }
 

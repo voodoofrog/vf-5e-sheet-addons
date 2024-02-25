@@ -1,47 +1,61 @@
 <script>
-  import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from '#runtime/svelte/helper';
-  import { updateDoc } from '../update-doc.js';
   import { MODULE_ID, FLAGS, SPELL_MANAGER } from '../constants.js';
 
   export let classes;
-  export let item;
+  export let spell;
   export let mode;
-  const spell = new TJSDocument(item);
+
+  const source = spell.flags?.[MODULE_ID]?.[FLAGS.SPELL_SOURCE] || '';
+
+  const onChangeSelect = (accessor, value) => {
+    spell.update({ [accessor]: value });
+  };
 </script>
 
 <li class="item">
-  <div class="item-name" aria-label={$spell.name}>
-    <img class="item-image gold-icon" src={$spell.img} alt={$spell.name} />
+  <div class="item-name" aria-label={spell.name}>
+    <img class="item-image gold-icon" src={spell.img} alt={spell.name} />
     <div class="name name-stacked">
-      <span class="title">{$spell.name}</span>
+      <span class="title">{spell.name}</span>
     </div>
     <div class="tags">
-      {#if $spell.system.properties.has('ritual')}
+      {#if spell.system.properties.has('ritual')}
         <span aria-label={localize('DND5E.Item.Property.Ritual')}>
           <dnd5e-icon src="systems/dnd5e/icons/svg/items/spell.svg"></dnd5e-icon>
         </span>
       {/if}
-      {#if $spell.system.properties.has('concentration')}
+      {#if spell.system.properties.has('concentration')}
         <span aria-label={localize('DND5E.Item.Property.Concentration')}>
           <dnd5e-icon src="systems/dnd5e/icons/svg/statuses/concentrating.svg"></dnd5e-icon>
         </span>
       {/if}
     </div>
   </div>
-  <div class="item-detail spell-level">{$spell.system.level}</div>
+  <div class="item-detail spell-level">{spell.system.level}</div>
   {#if mode === SPELL_MANAGER.MODES.ADD}
-    <div class="item-detail spell-prep">TBD</div>
+    <div class="item-detail spell-prep">
+      <select
+        name="system.preparation.mode"
+        class="roboto-upper unselect"
+        on:change={(e) => onChangeSelect('system.preparation.mode', e.currentTarget.value)}
+      >
+        {#each Object.entries(CONFIG.DND5E.spellPreparationModes) as [key, value]}
+          <option value={key} selected={key === spell.system.preparation.mode}>{value}</option>
+        {/each}
+      </select>
+    </div>
   {/if}
-  <div class="item-detail item-source">
+  <div class="item-detail spell-source">
     <select
       name="spell-source"
-      class="spell-source roboto-upper unselect"
-      use:updateDoc={{ doc: spell, accessor: `flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}` }}
+      class="roboto-upper unselect"
+      on:change={(e) => onChangeSelect(`flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}`, e.currentTarget.value)}
+      disabled={spell.system.preparation.mode !== 'prepared'}
     >
-      <option value="">None</option>
+      <option value="" selected={source === ''}>{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.default-option`)}</option>
       {#each classes as c}
-        <option value={c}>{c}</option>
+        <option value={c} selected={c === source}>{c}</option>
       {/each}
     </select>
   </div>
@@ -66,7 +80,7 @@
     width: 50px;
   }
 
-  .item .item-source {
+  .item .spell-source {
     width: 180px;
   }
 
@@ -151,6 +165,14 @@
     font-size: var(--font-size-12);
     color: var(--color-text-dark-5);
     width: 30px;
+    padding-top: 2px;
+    text-align: center;
+  }
+
+  .spell-prep {
+    font-size: var(--font-size-12);
+    color: var(--color-text-dark-5);
+    width: 155px;
     padding-top: 2px;
     text-align: center;
   }

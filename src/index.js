@@ -1,7 +1,12 @@
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { MODULE_ID, SETTINGS } from './constants';
 import { EditClassesButton } from './applications/edit-classes-button.js';
-import { renderSpellPrepChanges, createSpell, updateSpellForCharacter } from './spell-preparation.js';
+import {
+  renderSpellPrepChanges,
+  createSpell,
+  updateSpellForCharacter,
+  deleteSpellFromManager
+} from './spell-preparation.js';
 import '../styles/styles.scss';
 
 export const gameSettings = new TJSGameSettings(MODULE_ID);
@@ -185,6 +190,12 @@ Hooks.on('createItem', async (item, config, userId) => {
 Hooks.on('updateItem', async (item, data) => {
   if (item.type === 'spell' && item.parent?.type === 'character') {
     updateSpellForCharacter(item, data);
+  }
+});
+
+Hooks.on('deleteItem', async (item, data, itemId) => {
+  if (item.type === 'spell' && item.parent?.type === 'character') {
+    deleteSpellFromManager(item.parent.id, itemId);
   }
 });
 

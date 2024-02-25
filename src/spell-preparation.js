@@ -11,7 +11,8 @@ const createSpellStore = () => {
 
   return {
     subscribe,
-    add: (spell) => update((spells) => [...spells, spell]),
+    add: (spellId) => update((spellIds) => [...spellIds, spellId]),
+    remove: (spellId) => update((spellIds) => spellIds.filter((s) => s !== spellId)),
     reset: () => set([])
   };
 };
@@ -196,8 +197,9 @@ export const createSpell = (spellItem) => {
     spellStores[actor.id] = createSpellStore();
   }
 
-  spellStores[actor.id].add(spellItem);
+  spellStores[actor.id].add(spellItem.id);
 
+  // TODO: find a way to make height more dynamic
   new SpellBookAdd({
     id: SpellBookAdd.createId(actor.id),
     svelte: { props: { actor } }
@@ -219,5 +221,11 @@ export const updateSpellForCharacter = (item, data) => {
       prepLimits[source] = wasPrepped ? current + 1 : Math.max(0, current - 1);
       actor?.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
     }
+  }
+};
+
+export const deleteSpellFromManager = (actorId, spellId) => {
+  if (spellStores[actorId]) {
+    spellStores[actorId].remove(spellId);
   }
 };
