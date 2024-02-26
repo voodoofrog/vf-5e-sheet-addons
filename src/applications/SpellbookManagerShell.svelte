@@ -62,6 +62,7 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    min-height: fit-content;
 
     --tjs-input-text-width: 100px;
 

@@ -11,6 +11,7 @@ export default class SpellBookManager extends SvelteApplication {
       minimizable: true,
       title: game.i18n.localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.title`),
       width: 550,
+      height: 'auto',
 
       svelte: {
         class: SpellbookManagerShell,

@@ -207,7 +207,6 @@ export const createSpell = async (spellItem) => {
 
     spellStores[actor.id].add(spellItem.id);
 
-    // TODO: find a way to make height more dynamic
     new SpellBookAdd({
       id: SpellBookAdd.createId(actor.id),
       svelte: { props: { actor } }
