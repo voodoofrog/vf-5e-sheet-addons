@@ -21,7 +21,8 @@ const {
   PREP_BAR_TOP,
   PREP_BAR_BOTTOM,
   IDENTIFY_PERMISSION,
-  REMOVE_ATTUNEMENT
+  REMOVE_ATTUNEMENT,
+  ADD_SPELL_MANAGER
 } = SETTINGS;
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -70,6 +71,18 @@ Hooks.once('init', async () => {
         config: true,
         type: Boolean,
         default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: ADD_SPELL_MANAGER,
+      options: {
+        name: `${MODULE_ID}.settings.${ADD_SPELL_MANAGER}.name`,
+        hint: `${MODULE_ID}.settings.${ADD_SPELL_MANAGER}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false
       }
     },
     {

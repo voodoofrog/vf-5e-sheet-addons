@@ -6,7 +6,7 @@
   import { localize } from '#runtime/svelte/helper';
   import { getValidClasses } from '../spell-preparation';
   import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
-  import { MODULE_ID, SPELL_MANAGER } from '../constants';
+  import { MODULE_ID, SPELL_MANAGER, SETTINGS } from '../constants';
   import { spellStores } from '../spell-preparation';
 
   export let elementRoot;
@@ -22,6 +22,7 @@
   const actorDoc = new TJSDocument(actor);
   const filters = [spellFilter, levelFilter];
   const classes = getValidClasses(actor).map((vc) => vc.name);
+  const sourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
 
   if (isAddMode) {
     filters.push(spellIdFilter);
@@ -43,7 +44,9 @@
         {#if isAddMode}
           <div class="item-header spell-prep">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.prep`)}</div>
         {/if}
-        <div class="item-header spell-source">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.source`)}</div>
+        {#if sourcesEnabled}
+          <div class="item-header spell-source">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.source`)}</div>
+        {/if}
       </div>
       <ol class="item-list unlist">
         {#each [...$spells] as spell (spell.id)}

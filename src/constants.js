@@ -8,7 +8,8 @@ export const SETTINGS = {
   PREP_BAR_TOP: 'prep-bar-top',
   PREP_BAR_BOTTOM: 'prep-bar-bottom',
   IDENTIFY_PERMISSION: 'identify-permission',
-  REMOVE_ATTUNEMENT: 'remove-attunement-control'
+  REMOVE_ATTUNEMENT: 'remove-attunement-control',
+  ADD_SPELL_MANAGER: 'add-spell-manager'
 };
 export const FLAGS = {
   SPELL_SOURCE: 'source',

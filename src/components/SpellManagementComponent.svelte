@@ -1,12 +1,13 @@
 <script>
   import { localize } from '#runtime/svelte/helper';
-  import { MODULE_ID, FLAGS, SPELL_MANAGER } from '../constants.js';
+  import { MODULE_ID, FLAGS, SPELL_MANAGER, SETTINGS } from '../constants.js';
 
   export let classes;
   export let spell;
   export let mode;
 
   const source = spell.flags?.[MODULE_ID]?.[FLAGS.SPELL_SOURCE] || '';
+  const sourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
 
   const onChangeSelect = (accessor, value) => {
     spell.update({ [accessor]: value });
@@ -46,19 +47,21 @@
       </select>
     </div>
   {/if}
-  <div class="item-detail spell-source">
-    <select
-      name="spell-source"
-      class="roboto-upper unselect"
-      on:change={(e) => onChangeSelect(`flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}`, e.currentTarget.value)}
-      disabled={spell.system.preparation.mode !== 'prepared'}
-    >
-      <option value="" selected={source === ''}>{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.default-option`)}</option>
-      {#each classes as c}
-        <option value={c} selected={c === source}>{c}</option>
-      {/each}
-    </select>
-  </div>
+  {#if sourcesEnabled}
+    <div class="item-detail spell-source">
+      <select
+        name="spell-source"
+        class="roboto-upper unselect"
+        on:change={(e) => onChangeSelect(`flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}`, e.currentTarget.value)}
+        disabled={spell.system.preparation.mode !== 'prepared'}
+      >
+        <option value="" selected={source === ''}>{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.default-option`)}</option>
+        {#each classes as c}
+          <option value={c} selected={c === source}>{c}</option>
+        {/each}
+      </select>
+    </div>
+  {/if}
 </li>
 
 <style lang="scss">

@@ -4,7 +4,14 @@ import SpellPrepBar from './components/SpellPrepBar.svelte';
 import SpellBookAdd from './applications/spellbook-add';
 import { originalFilterItems, originalFilterItem } from './index';
 
-const { ADDITIONAL_CLASS_NAMES, SHOW_PREP_COLOURS, USE_CLASS_SOURCES, PREP_BAR_TOP, PREP_BAR_BOTTOM } = SETTINGS;
+const {
+  ADDITIONAL_CLASS_NAMES,
+  SHOW_PREP_COLOURS,
+  USE_CLASS_SOURCES,
+  PREP_BAR_TOP,
+  PREP_BAR_BOTTOM,
+  ADD_SPELL_MANAGER
+} = SETTINGS;
 
 const createSpellStore = () => {
   const { subscribe, set, update } = writable([]);
@@ -190,20 +197,22 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
   }
 };
 
-export const createSpell = (spellItem) => {
-  const actor = spellItem.parent;
+export const createSpell = async (spellItem) => {
+  if (game.settings.get(MODULE_ID, ADD_SPELL_MANAGER)) {
+    const actor = spellItem.parent;
 
-  if (!spellStores[actor.id]) {
-    spellStores[actor.id] = createSpellStore();
+    if (!spellStores[actor.id]) {
+      spellStores[actor.id] = createSpellStore();
+    }
+
+    spellStores[actor.id].add(spellItem.id);
+
+    // TODO: find a way to make height more dynamic
+    new SpellBookAdd({
+      id: SpellBookAdd.createId(actor.id),
+      svelte: { props: { actor } }
+    }).render(true, { focus: true });
   }
-
-  spellStores[actor.id].add(spellItem.id);
-
-  // TODO: find a way to make height more dynamic
-  new SpellBookAdd({
-    id: SpellBookAdd.createId(actor.id),
-    svelte: { props: { actor } }
-  }).render(true, { focus: true });
 };
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources
@@ -225,7 +234,7 @@ export const updateSpellForCharacter = (item, data) => {
 };
 
 export const deleteSpellFromManager = (actorId, spellId) => {
-  if (spellStores[actorId]) {
+  if (game.settings.get(MODULE_ID, ADD_SPELL_MANAGER) && spellStores[actorId]) {
     spellStores[actorId].remove(spellId);
   }
 };
