@@ -21,7 +21,7 @@ Even better, it includes a means to set the class source of your spells so that 
 There are settings in the module too, so that these features can be turned on or off, and if you have any custom preparation style casting classes there is a menu in the settings to add their class names. Note that when entering these names you should use the name as it appears on the Spells tab of the sheet, title case and all. I may change this in the future to use the actual class identifier, but it works as is for now.
 
 ### Item Identification
-You can set a minimum user role to show the identification options to — this includes the context menu on the characater sheet as well as the toggle at the top of the item sheet.
+You can set a minimum user role to show the identification options to — this includes the context menu on the character sheet as well as the toggle at the top of the item sheet.
 
 Furthermore, you can enable/disable the showing of attunement options to user below the role for unidentified items.
 
