@@ -28,7 +28,7 @@ Furthermore, you can enable/disable the showing of attunement options to user be
 **Note**: _If you set the permissions to Game Master role then Assistant GMs will still be able to see/access some things by default. You'd have to actually modify the core permissions to truly lock it down, but I left the option in there for those that might want it._
 
 ### Manager for Added Spells
-There's a neat convenience feature you can turn on in the module's settings that handles spells as they're added to an actor (it is off by default). Essentially it will pop up a window showing all the spells you're adding and allow you to change the preparation mode for them. If spell sources is enabled, this window will also allow you to set the source.
+There's a neat convenience feature you can turn on in the module's settings that handles spells as they're added to an actor (it is off by default). Essentially it will pop up a window showing all the spells you're adding and allow you to change the preparation mode for them. If spell sources are enabled, this window will also allow you to set the source.
 
 ## Install
 Manifest: `https://github.com/voodoofrog/vf-5e-sheet-addons/releases/latest/download/module.json`
