@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { localize } from '#runtime/svelte/helper';
 import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS } from './constants';
 import SpellPrepBar from './components/SpellPrepBar.svelte';
 import { originalFilterItems, originalFilterItem } from './index';
@@ -8,11 +9,11 @@ const { ADDITIONAL_CLASS_NAMES, SHOW_PREP_COLOURS, USE_CLASS_SOURCES, PREP_BAR_T
 export const spellStore = writable([]);
 
 export const getPreparedCasterNames = () => [
-  game.i18n.localize(`${MODULE_ID}.class-names.artificer`),
-  game.i18n.localize(`${MODULE_ID}.class-names.cleric`),
-  game.i18n.localize(`${MODULE_ID}.class-names.druid`),
-  game.i18n.localize(`${MODULE_ID}.class-names.paladin`),
-  game.i18n.localize(`${MODULE_ID}.class-names.wizard`),
+  localize(`${MODULE_ID}.class-names.artificer`),
+  localize(`${MODULE_ID}.class-names.cleric`),
+  localize(`${MODULE_ID}.class-names.druid`),
+  localize(`${MODULE_ID}.class-names.paladin`),
+  localize(`${MODULE_ID}.class-names.wizard`),
   ...game.settings.get(MODULE_ID, ADDITIONAL_CLASS_NAMES)
 ];
 
@@ -90,7 +91,7 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
     const actorItems = actor?.items;
     const spellItems = spellListCards.find('.item-list li');
     const filterList = spellListControls.find('search .filter-list');
-    const prepText = game.i18n.localize(`${MODULE_ID}.spellcasting.preparable`);
+    const prepText = localize(`${MODULE_ID}.spellcasting.preparable`);
     for (const c of getValidClasses(actor).map((vc) => vc.name)) {
       const enabled = sheet._filters.spellbook.properties.has(c);
       filterList.append(`
@@ -163,8 +164,14 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
         }
       } else {
         // Add classes for simple prep limits display
-        const prepSelector = spellItems.find(PREP_SELECTOR);
-        const itemEntry = spellItems.find('.item');
+        const prepSelector = spellItems.find(`
+          a[data-action="prepare"][aria-label="${localize('DND5E.Prepared')}"]:not([aria-disabled="true"]),
+          a[data-action="prepare"][aria-label="${localize('DND5E.SpellUnprepared')}"]:not([aria-disabled="true"])
+          `);
+        const itemEntry = spellItems.find('.item').has(`
+          .item-controls a[aria-label="${localize('DND5E.Prepared')}"],
+          .item-controls a[aria-label="${localize('DND5E.SpellUnprepared')}"]
+          `);
 
         if (data?.preparedSpells === totalLimit) {
           prepSelector.addClass('prep-limit');
