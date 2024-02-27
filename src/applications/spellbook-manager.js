@@ -1,4 +1,5 @@
 import { SvelteApplication } from '#runtime/svelte/application';
+import { localize } from '#runtime/svelte/helper';
 import SpellbookManagerShell from './SpellbookManagerShell.svelte';
 import { MODULE_ID, SPELL_MANAGER } from '../constants';
 
@@ -9,7 +10,7 @@ export default class SpellBookManager extends SvelteApplication {
       classes: [MODULE_ID],
       resizable: true,
       minimizable: true,
-      title: game.i18n.localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.title`),
+      title: localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.title`),
       width: 550,
       height: 'auto',
 

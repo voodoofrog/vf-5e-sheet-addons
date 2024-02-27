@@ -1,4 +1,5 @@
 import { SvelteApplication } from '#runtime/svelte/application';
+import { localize } from '#runtime/svelte/helper';
 import { writable } from 'svelte/store';
 import { MODULE_ID, SETTINGS } from '../constants';
 import { gameSettings } from '../index';
@@ -21,7 +22,7 @@ export class EditClasses extends SvelteApplication {
       classes: [MODULE_ID],
       resizable: true,
       minimizable: true,
-      title: game.i18n.localize(`${MODULE_ID}.settings.${SETTINGS.EDIT_CLASS_NAMES_MENU}.title`),
+      title: localize(`${MODULE_ID}.settings.${SETTINGS.EDIT_CLASS_NAMES_MENU}.title`),
       width: 600,
 
       svelte: {
