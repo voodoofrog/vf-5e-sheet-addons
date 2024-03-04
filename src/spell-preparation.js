@@ -108,7 +108,7 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
     // Add new filter options for valid classes
     const spellListCards = spellsList.find('.card');
     const actorItems = actor?.items;
-    const spellItems = spellListCards.find('.item-list li');
+    const spellElements = spellListCards.find('.item-list li');
     const filterList = spellListControls.find('search .filter-list');
     const prepText = localize(`${MODULE_ID}.spellcasting.preparable`);
     for (const c of getValidClasses(actor).map((vc) => vc.name)) {
@@ -143,7 +143,7 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
     };
 
     // Add source name to spell subtitles
-    spellItems.each((idx, s) => {
+    spellElements.each((idx, s) => {
       const source = actorItems?.get(s.dataset?.itemId)?.getFlag(MODULE_ID, FLAGS.SPELL_SOURCE);
       if (source) {
         $(s).find('.subtitle').append(` (${source})`);
