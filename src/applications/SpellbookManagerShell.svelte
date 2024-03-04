@@ -6,35 +6,51 @@
   import { localize } from '#runtime/svelte/helper';
   import { getValidClasses } from '../spell-preparation';
   import SpellManagementComponent from '../components/SpellManagementComponent.svelte';
-  import { MODULE_ID, SPELL_MANAGER } from '../constants';
+  import { MODULE_ID, SPELL_MANAGER, SETTINGS } from '../constants';
+  import { spellStores } from '../spell-preparation';
 
   export let elementRoot;
-  export let actor = new TJSDocument();
+  export let actor;
   export let minLevel = 1;
+  export let mode = SPELL_MANAGER.MODES.MANAGE;
 
-  const spellFilter = (data) => data.type === 'spell';
-  const levelFilter = (data) => data.system.level >= minLevel;
+  const spellStore = spellStores[actor.id];
+  const spellFilter = (item) => item.type === 'spell';
+  const levelFilter = (item) => item.system.level >= minLevel;
+  const spellIdFilter = (item) => $spellStore.includes(item.id);
+  const isAddMode = mode === SPELL_MANAGER.MODES.ADD;
+  const actorDoc = new TJSDocument(actor);
+  const filters = [spellFilter, levelFilter];
+  const classes = getValidClasses(actor).map((vc) => vc.name);
+  const sourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
 
-  const spells = actor.embedded.create(Item, {
+  if (isAddMode) {
+    filters.push(spellIdFilter);
+  }
+
+  const spells = actorDoc.embedded.create(Item, {
     name: 'spell',
-    filters: [spellFilter, levelFilter],
+    filters,
     sort: (a, b) => a.system.level - b.system.level || a.name.localeCompare(b.name)
   });
-
-  const classes = getValidClasses(actor.get()).map((vc) => vc.name);
 </script>
 
 <ApplicationShell bind:elementRoot>
   <main>
     <div class="items-section card">
       <div class="items-header header">
-        <h3 class="item-name spell-header">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.name`)}</h3>
-        <div class="item-header spell-level">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.level`)}</div>
-        <div class="item-header item-source">{localize(`${MODULE_ID}.${SPELL_MANAGER}.headers.source`)}</div>
+        <h3 class="item-name spell-header">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.name`)}</h3>
+        <div class="item-header spell-level">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.level`)}</div>
+        {#if isAddMode}
+          <div class="item-header spell-prep">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.prep`)}</div>
+        {/if}
+        {#if sourcesEnabled}
+          <div class="item-header spell-source">{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.headers.source`)}</div>
+        {/if}
       </div>
       <ol class="item-list unlist">
-        {#each [...$spells] as item (item.id)}
-          <SpellManagementComponent {item} {classes} />
+        {#each [...$spells] as spell (spell.id)}
+          <SpellManagementComponent {spell} {classes} {mode} />
         {/each}
       </ol>
     </div>
@@ -46,6 +62,7 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    min-height: fit-content;
 
     --tjs-input-text-width: 100px;
 
@@ -83,7 +100,11 @@
           width: 50px;
         }
 
-        .items-header .item-source {
+        .items-header .spell-prep {
+          width: 155px;
+        }
+
+        .items-header .spell-source {
           width: 180px;
         }
 

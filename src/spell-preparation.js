@@ -2,11 +2,30 @@ import { writable } from 'svelte/store';
 import { localize } from '#runtime/svelte/helper';
 import { MODULE_ID, PREP_SELECTOR, SETTINGS, FLAGS } from './constants';
 import SpellPrepBar from './components/SpellPrepBar.svelte';
+import SpellBookAdd from './applications/spellbook-add';
 import { originalFilterItems, originalFilterItem } from './index';
 
-const { ADDITIONAL_CLASS_NAMES, SHOW_PREP_COLOURS, USE_CLASS_SOURCES, PREP_BAR_TOP, PREP_BAR_BOTTOM } = SETTINGS;
+const {
+  ADDITIONAL_CLASS_NAMES,
+  SHOW_PREP_COLOURS,
+  USE_CLASS_SOURCES,
+  PREP_BAR_TOP,
+  PREP_BAR_BOTTOM,
+  ADD_SPELL_MANAGER
+} = SETTINGS;
 
-export const spellStore = writable([]);
+const createSpellStore = () => {
+  const { subscribe, set, update } = writable([]);
+
+  return {
+    subscribe,
+    add: (spellId) => update((spellIds) => [...spellIds, spellId]),
+    remove: (spellId) => update((spellIds) => spellIds.filter((s) => s !== spellId)),
+    reset: () => set([])
+  };
+};
+
+export const spellStores = {};
 
 export const getPreparedCasterNames = () => [
   localize(`${MODULE_ID}.class-names.artificer`),
@@ -185,10 +204,21 @@ export const renderSpellPrepChanges = (sheet, html, data) => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-export const createSpell = (item) => {
-  // const actor = new TJSDocument(item.parent);
-  // new SpellBookManager({ svelte: { props: { actor, minLevel: 1 } } }).render(true, { focus: true });
+export const createSpell = async (spellItem) => {
+  if (game.settings.get(MODULE_ID, ADD_SPELL_MANAGER)) {
+    const actor = spellItem.parent;
+
+    if (!spellStores[actor.id]) {
+      spellStores[actor.id] = createSpellStore();
+    }
+
+    spellStores[actor.id].add(spellItem.id);
+
+    new SpellBookAdd({
+      id: SpellBookAdd.createId(actor.id),
+      svelte: { props: { actor } }
+    }).render(true, { focus: true });
+  }
 };
 
 // TODO: investigate how this will interact with characters who have prepared spells but no sources
@@ -206,5 +236,11 @@ export const updateSpellForCharacter = (item, data) => {
       prepLimits[source] = wasPrepped ? current + 1 : Math.max(0, current - 1);
       actor?.setFlag(MODULE_ID, FLAGS.PREP_LIMITS, prepLimits);
     }
+  }
+};
+
+export const deleteSpellFromManager = (actorId, spellId) => {
+  if (game.settings.get(MODULE_ID, ADD_SPELL_MANAGER) && spellStores[actorId]) {
+    spellStores[actorId].remove(spellId);
   }
 };

@@ -1,7 +1,6 @@
 <svelte:options accessors={true} />
 
 <script>
-  import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
   import { localize } from '#runtime/svelte/helper';
   import SpellBookManager from '../applications/spellbook-manager';
   import { MODULE_ID, SETTINGS } from '../constants';
@@ -49,8 +48,10 @@
       class="spells-manage gold-button"
       aria-label="Manage Spell Sources"
       on:click={() => {
-        const actorDoc = new TJSDocument(actor);
-        new SpellBookManager({ svelte: { props: { actor: actorDoc, minLevel: 1 } } }).render(true, { focus: true });
+        new SpellBookManager({
+          id: SpellBookManager.createId(actor.id),
+          svelte: { props: { actor } }
+        }).render(true, { focus: true });
       }}
     >
       <i class="fas fa-feather"></i>

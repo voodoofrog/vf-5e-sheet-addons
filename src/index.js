@@ -1,7 +1,12 @@
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { MODULE_ID, SETTINGS } from './constants';
 import { EditClassesButton } from './applications/edit-classes-button.js';
-import { renderSpellPrepChanges, createSpell, updateSpellForCharacter } from './spell-preparation.js';
+import {
+  renderSpellPrepChanges,
+  createSpell,
+  updateSpellForCharacter,
+  deleteSpellFromManager
+} from './spell-preparation.js';
 import '../styles/styles.scss';
 
 export const gameSettings = new TJSGameSettings(MODULE_ID);
@@ -16,7 +21,8 @@ const {
   PREP_BAR_TOP,
   PREP_BAR_BOTTOM,
   IDENTIFY_PERMISSION,
-  REMOVE_ATTUNEMENT
+  REMOVE_ATTUNEMENT,
+  ADD_SPELL_MANAGER
 } = SETTINGS;
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
@@ -65,6 +71,18 @@ Hooks.once('init', async () => {
         config: true,
         type: Boolean,
         default: true
+      }
+    },
+    {
+      namespace: MODULE_ID,
+      key: ADD_SPELL_MANAGER,
+      options: {
+        name: `${MODULE_ID}.settings.${ADD_SPELL_MANAGER}.name`,
+        hint: `${MODULE_ID}.settings.${ADD_SPELL_MANAGER}.hint`,
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false
       }
     },
     {
@@ -185,6 +203,12 @@ Hooks.on('createItem', async (item, config, userId) => {
 Hooks.on('updateItem', async (item, data) => {
   if (item.type === 'spell' && item.parent?.type === 'character') {
     updateSpellForCharacter(item, data);
+  }
+});
+
+Hooks.on('deleteItem', async (item, data, itemId) => {
+  if (item.type === 'spell' && item.parent?.type === 'character') {
+    deleteSpellFromManager(item.parent.id, itemId);
   }
 });
 

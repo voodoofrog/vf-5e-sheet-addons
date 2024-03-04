@@ -55,6 +55,10 @@
       "remove-attunement-control": {
         "name": "Remove Attunement Control",
         "hint": "For users below the above role, also remove the attunement control for unidentified items from the character sheet. You will need to reopen sheets to see the change."
+      },
+      "add-spell-manager": {
+        "name": "Manage Added Spells",
+        "hint": "Creates a spell manager window when you add spells to an actor, allowing you to set the preparation mode and the source if 'Use Class Sources' is enabled."
       }
     },
     "spell-manager": {
@@ -62,8 +66,10 @@
       "headers": {
         "name": "Spell",
         "level": "Level",
+        "prep": "Preparation",
         "source": "Source"
-      }
+      },
+      "default-option": "Other"
     },
     "spell-prep-bar": {
       "heading": "Spell Preparation",
