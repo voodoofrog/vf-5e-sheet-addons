@@ -67,6 +67,11 @@
         "name": "Spell",
         "level": "Level",
         "prep": "Preparation",
+        "source": "Source",
+        "quick-set": "Quick Set All:"
+      },
+      "quick-set": {
+        "prep": "Preparation",
         "source": "Source"
       },
       "default-option": "Other"

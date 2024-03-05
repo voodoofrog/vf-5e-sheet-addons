@@ -5,6 +5,7 @@
   export let classes;
   export let spell;
   export let mode;
+  export let updating;
 
   const source = spell.flags?.[MODULE_ID]?.[FLAGS.SPELL_SOURCE] || '';
   const sourcesEnabled = game.settings.get(MODULE_ID, SETTINGS.USE_CLASS_SOURCES);
@@ -40,6 +41,7 @@
         name="system.preparation.mode"
         class="roboto-upper unselect"
         on:change={(e) => onChangeSelect('system.preparation.mode', e.currentTarget.value)}
+        disabled={updating}
       >
         {#each Object.entries(CONFIG.DND5E.spellPreparationModes) as [key, value]}
           <option value={key} selected={key === spell.system.preparation.mode}>{value}</option>
@@ -53,7 +55,7 @@
         name="spell-source"
         class="roboto-upper unselect"
         on:change={(e) => onChangeSelect(`flags.${MODULE_ID}.${FLAGS.SPELL_SOURCE}`, e.currentTarget.value)}
-        disabled={spell.system.preparation.mode !== 'prepared'}
+        disabled={spell.system.preparation.mode !== 'prepared' || updating}
       >
         <option value="" selected={source === ''}>{localize(`${MODULE_ID}.${SPELL_MANAGER.ID}.default-option`)}</option>
         {#each classes as c}
@@ -156,12 +158,6 @@
     content: '–';
     color: var(--color-text-light-6);
     font-weight: normal;
-  }
-
-  select.spell-source {
-    height: 14px;
-    width: 180px;
-    padding: 0;
   }
 
   .spell-source {
