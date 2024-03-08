@@ -23,7 +23,7 @@ There are settings in the module too, so that these features can be turned on or
 ### Item Identification
 You can set a minimum user role to show the identification options to — this includes the context menu on the character sheet as well as the toggle at the top of the item sheet.
 
-Furthermore, you can enable/disable the showing of attunement options to user below the role for unidentified items.
+Furthermore, you can enable/disable the showing of the attunement control next to unidentified items for users that are below the required permission level.
 
 **Note**: _If you set the permissions to Game Master role then Assistant GMs will still be able to see/access some things by default. You'd have to actually modify the core permissions to truly lock it down, but I left the option in there for those that might want it._
 
