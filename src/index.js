@@ -1,4 +1,5 @@
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
+import { lt as semverLessThan } from 'semver';
 import { MODULE_ID, SETTINGS } from './constants';
 import { EditClassesButton } from './applications/edit-classes-button.js';
 import {
@@ -165,15 +166,16 @@ Hooks.on('renderActorSheet5eCharacter2', (sheet, [html], data) => {
   const actorItems = actor?.items;
   const inventoryItems = $(html).find('section.inventory-list .item-list li.item');
 
-  // Remove price from display
-  // TODO: remove this when dnd5e 3.0.4 is released
-  inventoryItems.each((idx, i) => {
-    const item = actorItems?.get(i.dataset?.itemId);
-    const { identified } = item.system;
-    if (!identified) {
-      $(i).children('.item-price').empty().addClass('empty');
-    }
-  });
+  if (semverLessThan(game.system.version, '3.0.4')) {
+    // Remove price from display
+    inventoryItems.each((idx, i) => {
+      const item = actorItems?.get(i.dataset?.itemId);
+      const { identified } = item.system;
+      if (!identified) {
+        $(i).children('.item-price').empty().addClass('empty');
+      }
+    });
+  }
 
   // Handle character sheet attunement control
   if (
