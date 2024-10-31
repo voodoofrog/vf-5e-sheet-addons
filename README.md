@@ -11,8 +11,6 @@ This module adds some functionality to the new default 5e system character sheet
 * Handle setting up class sources for preparable spells.
 * Tighter controls around item identification.
 
-Right now, this is just in beta, but it's pretty stable and seems to work well.
-
 ### Prepared Casters
 For each prepared caster defined in the module (Artificer, Cleric, Druid, Paladin, and Wizard) it will, by default, show a bar at the top of the Spells tab which gives the spell preparation limit for the class.
 
